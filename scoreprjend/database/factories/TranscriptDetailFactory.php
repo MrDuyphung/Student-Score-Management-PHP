@@ -19,7 +19,7 @@ class TranscriptDetailFactory extends Factory
         return [
             'transcript_id' => $this->faker->randomElement(DB::table('transcripts   ')->pluck('id')),
             'student_id' => $this->faker->randomElement(DB::table('students')->pluck('id')),
-        'exam_times' => $this->faker->randomDigitNot('4,5,6,7,8,9'),
+        'exam_type' => $this->faker->randomDigitNot('4,5,6,7,8,9'),
         'semester' => $this->faker->randomDigitNot('3,4,5,6,7,8,9'),
           'score'=> $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = 10)
         ];

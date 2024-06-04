@@ -7,7 +7,7 @@ use App\Http\Requests\StoreAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Classes;
 use App\Models\Division;
-use App\Models\Lecturer;
+use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\TranscriptDetail;
 use Illuminate\Http\Request;
@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -142,19 +143,19 @@ class AdminController extends Controller
             ->join('transcript_details', 'transcript_details.transcript_id', '=', 'transcripts.id')
             ->where('divisions.class_id', $classId)
             ->where('divisions.subject_id', $subjectId)
-//            ->select('transcripts.*', 'exam_times') // Chọn tất cả các cột từ bảng transcripts và thêm cột exam_times
+//            ->select('transcripts.*', 'exam_type') // Chọn tất cả các cột từ bảng transcripts và thêm cột exam_type
             ->get();
 
 
         $studentCount = Student::count();
 //        $reportCount = Report::where('status','=', 0)->count();
-        $lecturerCount = Lecturer::count();
+        $teacherCount = Teacher::count();
         $divisionCount = Division::count();
 
 
         $transcriptBelow5Count = TranscriptDetail::where('score', '<', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -166,7 +167,7 @@ class AdminController extends Controller
 
         $transcriptAbove5Count = TranscriptDetail::where('score', '>=', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -183,7 +184,7 @@ class AdminController extends Controller
                 $query->where('note', 2);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -199,7 +200,7 @@ class AdminController extends Controller
                 $query->where('note', 3);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -211,7 +212,7 @@ class AdminController extends Controller
 
         $transcriptBelow5Count2nd = TranscriptDetail::where('score', '<', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -223,7 +224,7 @@ class AdminController extends Controller
 
         $transcriptAbove5Count2nd = TranscriptDetail::where('score', '>=', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -239,7 +240,7 @@ class AdminController extends Controller
                 $query->where('note', 2);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -255,7 +256,7 @@ class AdminController extends Controller
                 $query->where('note', 3);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -272,14 +273,13 @@ class AdminController extends Controller
         $classWithoutStudentsCount = Classes::doesntHave('student')->count();
         $accountAdmin = $request->only('username', 'password');
         if (Auth::guard('admin')->attempt($accountAdmin)){
-
             $admin = Auth::guard('admin')->user();
             Auth::login($admin);
             session(['admin' =>  $admin]);
             return view('dashboard', [
                 'studentCount' => $studentCount,
 //            'reportCount' => $reportCount,
-                'lecturerCount' => $lecturerCount,
+                'teacherCount' => $teacherCount,
                 'divisionCount' => $divisionCount,
                 'classWithStudentsCount' => $classWithStudentsCount,
                 'classWithoutStudentsCount' => $classWithoutStudentsCount,
@@ -306,4 +306,8 @@ class AdminController extends Controller
 
         return Redirect::route('admin.login');
     }
+
+
+
+
 }

@@ -15,7 +15,10 @@
     <link rel="stylesheet" href="{{asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css')}}">
     <!-- end plugin css -->
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
     {{--    <link rel="stylesheet" href="{{asset('assets/css/app.css')}}">--}}
@@ -47,6 +50,82 @@
 <script src="{{asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js')}}"></script>
 <!-- end base js -->
 
+<script>
+    // Hàm để kiểm tra xem có thời gian ảo đã được lưu trong sessionStorage chưa
+    function checkStoredVirtualTime() {
+        const storedVirtualTime = sessionStorage.getItem('virtualTime');
+        const storedUseVirtualTime = sessionStorage.getItem('useVirtualTime');
+
+        if (storedVirtualTime && storedUseVirtualTime) {
+            virtualTime = new Date(storedVirtualTime);
+            useVirtualTime = JSON.parse(storedUseVirtualTime);
+        } else {
+            useVirtualTime = false; // Nếu không có dữ liệu, set về thời gian thật
+        }
+    }
+
+    let virtualTime = null;
+    let useVirtualTime = false;
+
+    // Khởi tạo đồng hồ từ sessionStorage khi trang được tải
+    checkStoredVirtualTime();
+    updateClock();
+
+    function updateClock() {
+        const now = useVirtualTime ? virtualTime : new Date();
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayOfWeek = daysOfWeek[now.getDay()];
+        const day = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const year = now.getFullYear();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const dateString = `${dayOfWeek}, ${day}/${month}/${year}`;
+        const timeString = `${hours}:${minutes}:${seconds}`;
+
+        document.getElementById('date').textContent = dateString;
+        document.getElementById('time').textContent = timeString;
+    }
+
+    function setVirtualTime() {
+        const inputDate = document.getElementById('inputDate').value;
+        const inputTime = document.getElementById('inputTime').value;
+
+        if (inputDate && inputTime) {
+            virtualTime = new Date(`${inputDate}T${inputTime}`);
+            useVirtualTime = true;
+            updateClock();
+            saveVirtualTimeToSessionStorage();
+            $('#setTimeModal').modal('hide');
+        } else {
+            alert('Please enter both date and time.');
+        }
+    }
+
+    function resetToRealTime() {
+        useVirtualTime = false;
+        virtualTime = new Date(); // Set về thời gian thật
+        updateClock();
+        saveVirtualTimeToSessionStorage();
+    }
+
+    function saveVirtualTimeToSessionStorage() {
+        sessionStorage.setItem('virtualTime', useVirtualTime ? virtualTime.toISOString() : '');
+        sessionStorage.setItem('useVirtualTime', JSON.stringify(useVirtualTime));
+    }
+
+    // Liên tục cập nhật đồng hồ mỗi giây
+    setInterval(() => {
+        updateClock();
+        // Nếu sử dụng thời gian ảo, thì cập nhật thời gian ảo và lưu vào sessionStorage
+        if (useVirtualTime) {
+            virtualTime.setSeconds(virtualTime.getSeconds() + 1);
+            saveVirtualTimeToSessionStorage();
+        }
+    }, 1000);
+</script>
+
 <!-- plugin js -->
 
 <!-- end plugin js -->
@@ -65,6 +144,8 @@
         myTextElement.style.display = 'none';
     }, 3000);
 </script>
+
+
 
 
 </body>

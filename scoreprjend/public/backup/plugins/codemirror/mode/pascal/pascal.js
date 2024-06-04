@@ -30,7 +30,7 @@ CodeMirror.defineMode("pascal", function() {
     "helper implements index interrupt iocheck local message name near " +
     "nodefault noreturn nostackframe oldfpccall otherwise overload override " +
     "pascal platform private protected public published read register " +
-    "reintroduce result safecall saveregisters softfloat specialize static " +
+    "reintroduce result safecall saveregisters softfloat grade static " +
     "stdcall stored strict unaligned unimplemented varargs virtual write");
   var atoms = {"null": true};
 

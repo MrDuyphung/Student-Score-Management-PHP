@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transcripts', function (Blueprint $table) {
             $table->id();
             $table->string('transcript_name');
-            $table->tinyInteger('exam_times');
+            $table->tinyInteger('exam_type');
             $table->foreignId('division_id')->constrained('divisions');
         });
     }

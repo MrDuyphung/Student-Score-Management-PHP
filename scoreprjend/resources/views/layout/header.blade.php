@@ -8,7 +8,7 @@
 {{--        <ul class="navbar-nav navbar-nav-left header-links">--}}
 
 {{--            <li class="nav-item d-none d-xl-flex">--}}
-{{--                <a href="{{ route('division.index') }}" class="nav-link"> Lecturer Schedule <span class="badge badge-primary ml-1">New</span>--}}
+{{--                <a href="{{ route('division.index') }}" class="nav-link"> Teacher Schedule <span class="badge badge-primary ml-1">New</span>--}}
 {{--                </a>--}}
 {{--            </li>--}}
 {{--            <li class="nav-item active d-none d-lg-flex">--}}
@@ -140,7 +140,7 @@
 
         <ul class="navbar-nav navbar-nav-left header-links">
             <li class="nav-item d-none d-xl-flex">
-                <a href="{{ route('division.index') }}" class="nav-link"> Lecturer Schedule <span class="badge badge-primary ml-1">New</span>
+                <a href="{{ route('division.index') }}" class="nav-link"> teacher Schedule <span class="badge badge-primary ml-1">New</span>
                 </a>
             </li>
 {{--            <li class="nav-item active d-none d-lg-flex">--}}

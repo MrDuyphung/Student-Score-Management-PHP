@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Specialize;
+use App\Models\grade;
 use App\Models\Subject;
 use App\Http\Requests\StoreSubjectRequest;
 use App\Http\Requests\UpdateSubjectRequest;
@@ -18,17 +18,17 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         $query = Subject::query()
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->select([
                 'subjects.*',
-                'specializes.specialized_name AS specialized_name'
+                'grades.grade_name AS grade_name'
             ]);
 
         // Thêm điều kiện tìm kiếm nếu có tên lớp học hoặc năm học được nhập
         if ($request->has('search')) {
             $searchTerm = $request->input('search');
             $query->where('subject_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('specialized_name', 'like', '%' . $searchTerm . '%');
+                ->orWhere('graded_name', 'like', '%' . $searchTerm . '%');
         }
 
         $subjects = $query->get();
@@ -45,14 +45,14 @@ class SubjectController extends Controller
     public function create()
     {
 
-        $objSpecialize = new Specialize();
-        $specialize = $objSpecialize->index();
+        $objgrade = new grade();
+        $grade = $objgrade->index();
         return view('subject.create', [
-            'specializes' => $specialize
+            'grades' => $grade
         ]);
-//        $specializes = Specialize::all();
+//        $grades = grade::all();
 //        return view('subject.create', [
-//            'specializes' =>$specializes
+//            'grades' =>$grades
 //        ]);
     }
 
@@ -64,7 +64,7 @@ class SubjectController extends Controller
         $existingSubject = Subject::where('subject_name', $request->subject_name)
             ->exists();
         if ($existingSubject) {
-            // Nếu specialized_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
+            // Nếu graded_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
             // Ví dụ:
             Session::flash('error', 'Record already exists.');
             return Redirect::route('subject.index');
@@ -72,8 +72,9 @@ class SubjectController extends Controller
         }
         $obj = new Subject();
         $obj->subject_name = $request->subject_name;
-        $obj->duration = $request->duration;
-        $obj->specializes_id = $request->specializes_id;
+        $obj->semester = $request->semester;
+        $obj->text_book = $request->text_book;
+        $obj->grade_id = $request->grade_id;
         $obj->store();
         Session::flash('success', 'Added New Record');
         return Redirect::route('subject.index');
@@ -94,20 +95,20 @@ class SubjectController extends Controller
      */
     public function edit(Subject $subject, Request $request)
     {
-        $objSpecialize = new Specialize();
-        $specializes = $objSpecialize->index();
+        $objgrade = new grade();
+        $grades = $objgrade->index();
         $objSubject = new Subject();
         $objSubject->id = $request->id;
         $subjects = $objSubject->edit();
         return view('subject.edit', [
-            'specializes' => $specializes,
+            'grades' => $grades,
             'subjects' => $subjects,
             'id' => $objSubject->id
         ]);
-//        $specializes = Specialize::all();
+//        $grades = grade::all();
 //        return view('subject.edit', [
 //            'subject' => $subject,
-//            'specializes' => $specializes
+//            'grades' => $grades
 //        ]);
     }
 
@@ -119,7 +120,7 @@ class SubjectController extends Controller
         $existingSubject = Subject::where('subject_name', $request->subject_name)
             ->exists();
         if ($existingSubject) {
-            // Nếu specialized_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
+            // Nếu graded_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
             // Ví dụ:
             Session::flash('error', 'Record already exists.');
             return Redirect::route('subject.index');
@@ -128,8 +129,9 @@ class SubjectController extends Controller
         $obj = new Subject();
         $obj->id = $request->id;
         $obj->subject_name = $request->subject_name;
-        $obj->duration = $request->duration;
-        $obj->specializes_id = $request->specializes_id;
+        $obj->semester = $request->semester;
+        $obj->text_book = $request->text_book;
+        $obj->grade_id = $request->grade_id;
         $obj->updateSubject();
         Session::flash('success', 'Added New Record');
         return Redirect::route('subject.index');

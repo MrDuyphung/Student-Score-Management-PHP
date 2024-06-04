@@ -37,7 +37,8 @@ class SchoolYear extends Model
     {
         DB::table('school_years')
             ->insert([
-                'sy_number' => $this->sy_number,
+                'sy_start' => $this->sy_start,
+                'sy_end' => $this->sy_end,
                 'sy_name' => $this->sy_name
             ]);
     }
@@ -55,7 +56,8 @@ class SchoolYear extends Model
         DB::table('school_years')
             ->where('id', $this->id)
             ->update([
-                'sy_number' => $this->sy_number,
+                'sy_start' => $this->sy_start,
+                'sy_end' => $this->sy_end,
                 'sy_name' => $this->sy_name
 
             ]);

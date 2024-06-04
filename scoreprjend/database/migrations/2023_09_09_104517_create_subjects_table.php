@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('subject_name');
-            $table->string('duration');
-            $table->foreignId('specializes_id')->constrained('specializes');
+            $table->tinyInteger('semester');
+            $table->tinyInteger('text_book');
+            $table->foreignId('grade_id')->constrained('grades');
         });
     }
 

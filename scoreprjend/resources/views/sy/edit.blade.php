@@ -13,9 +13,17 @@
                 <div class="col-lg-10 mx-auto">
                     <div class="auto-form-wrapper">
                         <div class="form-group">
-                            <label class="label">School Year Number</label>
+                            <label class="label">School Year Start</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="School Year Number" value="{{ $school_year->sy_number }}" name="sy_number">
+                                <input type="text" class="form-control" placeholder="School Year Start" value="{{ $school_year->sy_start }}" name="sy_start">
+                                <div class="input-group-append">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="label">School Year End</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="School Year End" value="{{ $school_year->sy_end }}" name="sy_end">
                                 <div class="input-group-append">
                                 </div>
                             </div>

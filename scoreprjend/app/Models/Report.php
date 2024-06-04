@@ -26,7 +26,7 @@ class Report extends Model
 //        ->join('classes', 'students.class_id', '=', 'classes.id')
 //        ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
 //        ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-//        ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+//        ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
 //        ->join('subjects', 'divisions.subject_id', '=', 'subjects.id') // Thêm join bảng subjects
 //        ->select([
 //            'reports.*',
@@ -36,7 +36,7 @@ class Report extends Model
 //            'students.student_name AS student_name',
 //            'classes.class_name AS class_name',
 //            'divisions.division_name AS division_name',
-//            'lecturers.lecturer_name AS lecturer_name',
+//            'teachers.teacher_name AS teacher_name',
 //            'subjects.subject_name AS subject_name', // Chọn trường subject_name
 //            'school_years.sy_name AS sy_name'
 //            // Các cột khác của bảng transcripts nếu cần
@@ -70,9 +70,9 @@ class Report extends Model
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id') // Thêm join bảng subjects
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->where('students.id', $studentId)
             ->select([
                 'reports.*',
@@ -82,7 +82,7 @@ class Report extends Model
                 'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name', // Chọn trường subject_name
 
                 'school_years.sy_name AS sy_name'
@@ -97,14 +97,14 @@ class Report extends Model
         return $this->join('transcript_details', 'reports.transcriptdetail_id', '=', 'transcript_details.id')
             ->join('students', 'transcript_details.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
-            ->join('specializes', 'classes.specialize_id', '=', 'specializes.id')
+            ->join('grades', 'classes.grade_id', '=', 'grades.id')
             ->join('divisions', 'transcript_details.division_id', '=', 'divisions.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
             ->where('transcript_details.id', $transcriptDetailId)
             ->select([
                 'students.student_name',
                 'classes.class_name',
-                'specializes.specialized_name',
+                'grades.grade_name',
                 'subjects.subject_name',
                 'transcript_details.semester'
             ])
@@ -119,9 +119,9 @@ class Report extends Model
 //            ->join('classes', 'students.class_id', '=', 'classes.id')
 //            ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
 //            ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-//            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+//            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
 //            ->join('subjects', 'transcripts.subject_id', '=', 'subjects.id')
-//            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+//            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
 //            ->where('students.id', $studentId)
 //            ->select([
 //                'reports.*',
@@ -131,9 +131,9 @@ class Report extends Model
 //                'students.student_name AS student_name',
 //                'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
-//                'lecturers.lecturer_name AS lecturer_name',
+//                'teachers.teacher_name AS teacher_name',
 //                'subjects.subject_name AS subject_name',
-//                'specializes.specialized_name AS specialized_name',
+//                'grades.grade_name AS grade_name',
 //                'school_years.sy_name AS sy_name'
 //                // Các cột khác của bảng transcripts nếu cần
 //            ])

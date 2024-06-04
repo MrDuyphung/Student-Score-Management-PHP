@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\Division;
-use App\Models\Lecturer;
+use App\Models\Teacher;
 use App\Models\SchoolYear;
-use App\Models\Specialize;
+use App\Models\grade;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Transcript;
@@ -26,27 +26,27 @@ class TranscriptController extends Controller
      */
     public function index()
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Get the currently logged-in lecturer
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Get the currently logged-in teacher
+        $teacherId = $teacher->id;
 
         // Tạo một đối tượng Transcript
 
 
-        // Lấy danh sách transcripts liên quan đến Lecturer
+        // Lấy danh sách transcripts liên quan đến Teacher
         $transcripts = Transcript::join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->join('classes', 'divisions.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
-            ->where('lecturers.id', $lecturerId)
+            ->where('teachers.id', $teacherId)
             ->select([
                 'transcripts.*',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'classes.class_name AS class_name',
                 'school_years.sy_name AS sy_name'
                 // Các cột khác của bảng transcripts nếu cần
@@ -72,15 +72,15 @@ class TranscriptController extends Controller
      */
     public function create($division_id)
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Get the currently logged-in lecturer
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Get the currently logged-in teacher
+        $teacherId = $teacher->id;
 
         // Lấy danh sách divisions của giáo viên hiện tại
         $division = Division::find($division_id);
         $subjects = Subject::whereIn('id', $division->pluck('subject_id'))->get();
 
         // Lấy danh sách classes thuộc các subject trên
-        $classes = Classes::whereIn('specializes_id', $subjects->pluck('specializes_id'))
+        $classes = Classes::whereIn('grade_id', $subjects->pluck('grade_id'))
             ->with('school_year')
                 ->get();
 
@@ -97,18 +97,14 @@ class TranscriptController extends Controller
     public function store(StoreTranscriptRequest $request)
     {
         $divisionId = $request->division_id;
-        $examTimes = $request->exam_times;
+        $examTimes = $request->exam_type;
         $transcriptId = $request->transcript_id;
 
-        // Kiểm tra xem đã tồn tại transcript có exam_times bằng 0 và ở trạng thái "Finished" chưa
+        // Kiểm tra xem đã tồn tại transcript có exam_type bằng 0 và ở trạng thái "Finished" chưa
         $firstTimesFinished = Transcript::where('division_id', $divisionId)
-            ->where('exam_times', 0)
-            ->whereHas('transcriptDetails', function ($query) {
-                $query->where('score', '>=', 0);
-                $query->where('score', '<=', 10);
-            })
-
+            ->where('exam_type', 0)
             ->exists();
+
 
         $firstTimesFinished2 = Transcript::where('division_id', $divisionId)
 
@@ -116,30 +112,30 @@ class TranscriptController extends Controller
 
         // Kiểm tra xem có sinh viên nào có điểm dưới 5 hoặc điểm là null trong bản ghi transcript_details không
         $studentsWithLowScore = Transcript::where('division_id', $divisionId)
-            ->where('exam_times', 0)
+            ->where('exam_type', 0)
             ->whereHas('transcriptDetails', function ($query) {
                 $query->where('score', '>=', 5);
             })
 
             ->exists();
         if ($examTimes == 1 && !$firstTimesFinished) {
-            // Nếu exam_times là 1 và không có sinh viên nào có điểm dưới 5 hoặc điểm là null trong transcript_details của lần thi đầu tiên, hiển thị thông báo lỗi
+            // Nếu exam_type là 1 và không có sinh viên nào có điểm dưới 5 hoặc điểm là null trong transcript_details của lần thi đầu tiên, hiển thị thông báo lỗi
             Session::flash('error', 'You have to finish with 1st times so you can start working with 2nd times.');
 
             // Chuyển hướng trở về trang transcript.index
             return redirect()->route('transcript.index');
         }
         // Kiểm tra xem đã hoàn thành lần thi đầu tiên và không có sinh viên nào có điểm dưới 5 hoặc điểm là null trong transcript_details không
-        elseif ($examTimes == 1 && $studentsWithLowScore) {
+        elseif ($examTimes == 0 && $studentsWithLowScore) {
             // Nếu đều đáp ứng điều kiện, hiển thị thông báo lỗi
             Session::flash('error', 'This division has completed, No one have to take a 2nd exams.');
 
             // Chuyển hướng trở về trang transcript.index
             return redirect()->route('transcript.index');
         } elseif (Transcript::where('division_id', $divisionId)
-            ->where('exam_times', $examTimes)
+            ->where('exam_type', $examTimes)
             ->exists()) {
-            // Nếu đã tồn tại bản ghi transcript với exam_times = 1 cho division này, hiển thị thông báo lỗi
+            // Nếu đã tồn tại bản ghi transcript với exam_type = 1 cho division này, hiển thị thông báo lỗi
             Session::flash('error', 'This division has already exists.');
 
             // Chuyển hướng trở về trang transcript.index
@@ -148,7 +144,7 @@ class TranscriptController extends Controller
             // Tạo bản ghi transcript mới và lưu vào cơ sở dữ liệu
             $transcript = new Transcript();
             $transcript->transcript_name = $request->transcript_name;
-            $transcript->exam_times = $examTimes;
+            $transcript->exam_type = $examTimes;
             $transcript->division_id = $divisionId;
             $transcript->save();
 
@@ -174,16 +170,16 @@ class TranscriptController extends Controller
      */
     public function edit(Transcript $transcript, Request $request)
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Get the currently logged-in lecturer
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Get the currently logged-in teacher
+        $teacherId = $teacher->id;
 
         // Lấy danh sách divisions của giáo viên hiện tại
-        $divisions = Division::where('lecturer_id', $lecturerId)->get();
+        $divisions = Division::where('teacher_id', $teacherId)->get();
 
         $subjects = Subject::whereIn('id', $divisions->pluck('subject_id'))->get();
 
         // Lấy danh sách classes thuộc các subject trên
-        $classes = Classes::whereIn('specializes_id', $subjects->pluck('specializes_id'))->get();
+        $classes = Classes::whereIn('grade_id', $subjects->pluck('grade_id'))->get();
 
         $objTranscript = new Transcript();
         $objTranscript->id = $request->id;
@@ -205,7 +201,7 @@ class TranscriptController extends Controller
     {
 
         $divisionId = $request->division_id;
-        $exam_times = $request->exam_times;
+        $exam_type = $request->exam_type;
         $transcriptId = $request->transcript_id;
 
         // Lấy subject_id từ Division
@@ -228,7 +224,7 @@ class TranscriptController extends Controller
 //        }
 
         // Kiểm tra xem đã tồn tại bản ghi có division_id và class_id tương ứng chưa
-        $existingRecord = Transcript::where('exam_times', $exam_times)
+        $existingRecord = Transcript::where('exam_type', $exam_type)
             ->first();
 
 //        // Kiểm tra số lượng lớp học đã đăng ký bởi giáo viên cho division_id này
@@ -245,7 +241,7 @@ class TranscriptController extends Controller
             $obj = new Transcript();
             $obj->id = $request->id;
             $obj->transcript_name = $request->transcript_name;
-            $obj->exam_times = $exam_times;
+            $obj->exam_type = $exam_type;
             $obj->division_id = $divisionId;
 
             $obj->updateTranscript(); // Lưu trữ bản ghi
@@ -257,7 +253,7 @@ class TranscriptController extends Controller
         }
 //        elseif ($isClassAssigned) {
 //            // Nếu lớp học đã được đăng ký bởi giáo viên khác, hiển thị thông báo lỗi
-//            Session::flash('error', 'Class already assigned to another lecturer.');
+//            Session::flash('error', 'Class already assigned to another teacher.');
 //        } else {
 //            // Nếu số lượng lớp học đã vượt quá giới hạn, hiển thị thông báo lỗi
 //            Session::flash('error', 'Something Gone Wrong.');

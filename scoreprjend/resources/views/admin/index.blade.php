@@ -14,7 +14,7 @@
     <table border="1px" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <th>ID</th>
-            <th>Specialized Name</th>
+            <th>grade Name</th>
             <th>Password</th>
         </tr>
         @foreach($admins as $admin)

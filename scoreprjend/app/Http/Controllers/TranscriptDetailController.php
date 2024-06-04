@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Lecturer;
+use App\Models\Teacher;
 use App\Models\Report;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 use App\Models\Division;
-use App\Models\Specialize;
+use App\Models\grade;
 use App\Models\Student;
 use App\Models\Transcript;
 use App\Models\TranscriptDetail;
@@ -28,34 +28,34 @@ class TranscriptDetailController extends Controller
      */
     public function index($transcriptId)
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Lấy thông tin của lecturer đang đăng nhập
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Lấy thông tin của teacher đang đăng nhập
+        $teacherId = $teacher->id;
 
         $transcript_details = TranscriptDetail::join('transcripts', 'transcript_details.transcript_id', '=', 'transcripts.id')
             ->join('students', 'transcript_details.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->where('transcript_id', $transcriptId)
             ->select([
                 'transcript_details.*',
                 'transcripts.transcript_name AS transcript_name',
-                'transcripts.exam_times AS exam_times',
+                'transcripts.exam_type AS exam_type',
                 'students.student_name AS student_name',
                 'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'school_years.sy_name AS sy_name'
                 // Các cột khác của bảng transcripts nếu cần
 
             ])
-//            ->orderBy('transcript.exam_times', 'asc')
+//            ->orderBy('transcript.exam_type', 'asc')
             ->get();
 
 
@@ -67,12 +67,12 @@ class TranscriptDetailController extends Controller
      */
     public function create($transcriptId)
     {
-        // Get the currently logged-in lecturer
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
+        // Get the currently logged-in teacher
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
 
-        // Get divisions associated with the lecturer
-        $divisions = Division::where('lecturer_id', $lecturerId)->pluck('id');
+        // Get divisions associated with the teacher
+        $divisions = Division::where('teacher_id', $teacherId)->pluck('id');
 
         // Lấy division_id từ transcript_id chỉ nếu nó thuộc danh sách division của giáo viên
         $divisionId = Transcript::whereIn('division_id', $divisions)
@@ -96,13 +96,13 @@ class TranscriptDetailController extends Controller
         // Lấy chỉ một semester từ division_id
         $semester = Division::where('id', $divisionId)->value('semester');
 
-        // Lấy exam_times từ transcript_id
+        // Lấy exam_type từ transcript_id
         $examTimes = Transcript::whereIn('division_id', $divisions)
             ->where('id', $transcriptId)
-            ->pluck('exam_times')
+            ->pluck('exam_type')
             ->first();
 
-        // Lấy các bản ghi transcript tương ứng với division_id và exam_times
+        // Lấy các bản ghi transcript tương ứng với division_id và exam_type
         $transcripts = Transcript::whereIn('division_id', $divisions)
             ->where('id', $transcriptId)
             ->get();
@@ -126,12 +126,12 @@ class TranscriptDetailController extends Controller
 
     public function created($transcriptId)
     {
-        // Get the currently logged-in lecturer
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
+        // Get the currently logged-in teacher
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
 
-        // Get divisions associated with the lecturer
-        $divisions = Division::where('lecturer_id', $lecturerId)->pluck('id');
+        // Get divisions associated with the teacher
+        $divisions = Division::where('teacher_id', $teacherId)->pluck('id');
 
         // Lấy giá trị transcript_id từ request
 //        $transcriptId = $request->input('transcript_id');
@@ -145,10 +145,10 @@ class TranscriptDetailController extends Controller
         // Lấy chỉ một semester từ division_id
         $semester = Division::where('id', $divisionId)->value('semester');
 
-        // Lấy exam_times từ transcript_id
+        // Lấy exam_type từ transcript_id
 
 
-        // Lấy các bản ghi transcript tương ứng với division_id và exam_times
+        // Lấy các bản ghi transcript tương ứng với division_id và exam_type
         $transcripts = Transcript::whereIn('division_id', $divisions)
             ->where('id', $transcriptId)
             ->get();
@@ -166,7 +166,7 @@ class TranscriptDetailController extends Controller
                         $subquery->select('id')
                             ->from('transcripts')
                             ->whereIn('division_id', [$divisionId])
-                            ->where('exam_times', 0);
+                            ->where('exam_type', 0);
                     })
                     ->where(function ($subquery) {
                         $subquery->where('score','<', 5)
@@ -201,13 +201,13 @@ class TranscriptDetailController extends Controller
         // Nhận dữ liệu từ request
         $transcriptId = $request->input('transcript_id');
         $transcriptDetails = [];
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
 
-        // Kiểm tra xem lecturer có quyền truy cập vào transcript này không
+        // Kiểm tra xem teacher có quyền truy cập vào transcript này không
         $transcript = Transcript::where('id', $transcriptId)
-            ->whereHas('division', function ($query) use ($lecturerId) {
-                $query->where('lecturer_id', $lecturerId);
+            ->whereHas('division', function ($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId);
             })
             ->first();
 
@@ -215,8 +215,8 @@ class TranscriptDetailController extends Controller
             return redirect()->route('transcript.index')->with('error', 'You do not have access to this transcript.');
         }
 
-        // Get divisions associated with the lecturer
-        $divisions = Division::where('lecturer_id', $lecturerId)
+        // Get divisions associated with the teacher
+        $divisions = Division::where('teacher_id', $teacherId)
             ->where('id', $transcript->division_id)
             ->get();
 
@@ -274,22 +274,22 @@ class TranscriptDetailController extends Controller
     {
 
         // Nhận dữ liệu từ request
-        // Get divisions associated with the lecturer
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
-        $divisions = Division::where('lecturer_id', $lecturerId)->pluck('id');
+        // Get divisions associated with the teacher
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
+        $divisions = Division::where('teacher_id', $teacherId)->pluck('id');
 
         // Lấy giá trị transcript_id từ request
         $transcriptId = $request->input('transcript_id');
-        // Lấy các bản ghi transcript tương ứng với division_id và exam_times
+        // Lấy các bản ghi transcript tương ứng với division_id và exam_type
         $transcripts = Transcript::whereIn('division_id', $divisions)
             ->where('id', $transcriptId)
             ->get();
 
-        // Kiểm tra exam_times của transcript dựa trên transcript_id
-        $examTimes = Transcript::where('id', $transcriptId)->value('exam_times');
+        // Kiểm tra exam_type của transcript dựa trên transcript_id
+        $examTimes = Transcript::where('id', $transcriptId)->value('exam_type');
 
-        // Chỉ thêm bản ghi transcript_detail cho sinh viên có điểm dưới 5 và exam_times của transcript_id bằng 0
+        // Chỉ thêm bản ghi transcript_detail cho sinh viên có điểm dưới 5 và exam_type của transcript_id bằng 0
         if ($examTimes == 1) {
             // Lấy division_id từ transcript_id chỉ nếu nó thuộc danh sách division của giáo viên
             $divisionId = Transcript::whereIn('division_id', $divisions)
@@ -300,7 +300,7 @@ class TranscriptDetailController extends Controller
             // Lấy chỉ một semester từ division_id
             $semester = Division::where('id', $divisionId)->value('semester');
 
-            // Lấy exam_times từ transcript_id
+            // Lấy exam_type từ transcript_id
 
             // Lấy danh sách sinh viên từ lớp học của transcript hiện tại
             $students = Student::whereIn('class_id', function ($query) use ($divisionId) {
@@ -315,7 +315,7 @@ class TranscriptDetailController extends Controller
                             $subquery->select('id')
                                 ->from('transcripts')
                                 ->whereIn('division_id', [$divisionId])
-                                ->where('exam_times', 0);
+                                ->where('exam_type', 0);
                         })
                         ->where(function ($subquery) {
                             $subquery->where('score','<', 5)
@@ -397,7 +397,7 @@ class TranscriptDetailController extends Controller
         // Sử dụng Query Builder để tạo truy vấn tìm kiếm
         $results = TranscriptDetail::where(function ($query) use ($keyword) {
             $query->where('student_id', 'like', '%' . $keyword . '%')
-                ->orWhere('specializes_id', 'like', '%' . $keyword . '%')
+                ->orWhere('grade_id', 'like', '%' . $keyword . '%')
                 ->orWhere('class_id', 'like', '%' . $keyword . '%')
                 ->orWhere('subject_id', 'like', '%' . $keyword . '%');
         })->get();
@@ -410,11 +410,11 @@ class TranscriptDetailController extends Controller
      */
     public function edit(TranscriptDetail $transcriptDetail, Request $request)
     {
-        // Get the currently logged-in lecturer
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
-        // Get divisions associated with the lecturer
-        $divisions = Division::where('lecturer_id', $lecturerId)->get();
+        // Get the currently logged-in teacher
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
+        // Get divisions associated with the teacher
+        $divisions = Division::where('teacher_id', $teacherId)->get();
 
         // Get transcripts associated with the divisions
         $transcripts = Transcript::whereIn('division_id', $divisions->pluck('id'))->get();
@@ -448,10 +448,10 @@ class TranscriptDetailController extends Controller
         $score = $request->score;
 
     if (($note == 2 || $note == 3) && !empty($score)) {
-        // Nếu exam_times là 2 hoặc 3 và score không rỗng, hiển thị thông báo lỗi
+        // Nếu exam_type là 2 hoặc 3 và score không rỗng, hiển thị thông báo lỗi
     Session::flash('error', 'Score should be empty if this student get banned or skipped the exams.');
     } elseif (( $note == 1) && empty($score)) {
-        // Nếu exam_times là 1 hoặc 0 và score rỗng, hiển thị thông báo lỗi
+        // Nếu exam_type là 1 hoặc 0 và score rỗng, hiển thị thông báo lỗi
         Session::flash('error', 'This Student passed the exams but why he/she doesnt have point??.');
     } elseif ($score > 10 ){
         Session::flash('error', 'Maximum Score is 10.');
@@ -497,19 +497,19 @@ class TranscriptDetailController extends Controller
             ->join('transcript_details', 'transcript_details.transcript_id', '=', 'transcripts.id')
             ->where('divisions.class_id', $classId)
             ->where('divisions.subject_id', $subjectId)
-//            ->select('transcripts.*', 'exam_times') // Chọn tất cả các cột từ bảng transcripts và thêm cột exam_times
+//            ->select('transcripts.*', 'exam_type') // Chọn tất cả các cột từ bảng transcripts và thêm cột exam_type
             ->get();
 
 
         $studentCount = Student::count();
 //        $reportCount = Report::where('status','=', 0)->count();
-        $lecturerCount = Lecturer::count();
+        $teacherCount = Teacher::count();
         $divisionCount = Division::count();
 
 
         $transcriptBelow5Count = TranscriptDetail::where('score', '<', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -521,7 +521,7 @@ class TranscriptDetailController extends Controller
 
         $transcriptAbove5Count = TranscriptDetail::where('score', '>=', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -538,7 +538,7 @@ class TranscriptDetailController extends Controller
                 $query->where('note', 2);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -554,7 +554,7 @@ class TranscriptDetailController extends Controller
                 $query->where('note', 3);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 0)
+                $query->where('exam_type', 0)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -566,7 +566,7 @@ class TranscriptDetailController extends Controller
 
         $transcriptBelow5Count2nd = TranscriptDetail::where('score', '<', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -578,7 +578,7 @@ class TranscriptDetailController extends Controller
 
         $transcriptAbove5Count2nd = TranscriptDetail::where('score', '>=', 5)
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -594,7 +594,7 @@ class TranscriptDetailController extends Controller
                 $query->where('note', 2);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -610,7 +610,7 @@ class TranscriptDetailController extends Controller
                 $query->where('note', 3);
             })
             ->whereHas('transcript', function ($query) use ($classId, $subjectId) {
-                $query->where('exam_times', 1)
+                $query->where('exam_type', 1)
                     ->whereHas('division', function ($query) use ($subjectId, $classId) {
                         $query->where('class_id', $classId)
                             ->whereHas('subject', function ($query) use ($subjectId) {
@@ -630,7 +630,7 @@ class TranscriptDetailController extends Controller
         return view('dashboard', [
             'studentCount' => $studentCount,
 //            'reportCount' => $reportCount,
-            'lecturerCount' => $lecturerCount,
+            'teacherCount' => $teacherCount,
             'divisionCount' => $divisionCount,
             'classWithStudentsCount' => $classWithStudentsCount,
             'classWithoutStudentsCount' => $classWithoutStudentsCount,

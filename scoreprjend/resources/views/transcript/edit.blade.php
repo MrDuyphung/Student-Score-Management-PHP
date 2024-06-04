@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 @section('content')
     <form method="post" action="{{route('transcript.update', $id)}}">
         @csrf

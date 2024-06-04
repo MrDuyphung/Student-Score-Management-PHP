@@ -16,15 +16,15 @@ class Division extends Model
         $division = DB::table('divisions')
             ->join('classes', 'divisions.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.sy_id', '=', 'school_years.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->join('admins', 'divisions.admin_id', '=', 'admins.id')
             ->select(['divisions.*',
                 'classes.*',
                 'school_years.*',
-                'lecturers.lecturer_name AS lecturer_name',
-                'specializes.specialized_name AS specialized_name',
+                'teachers.teacher_name AS teacher_name',
+                'grades.grade_name AS grade_name',
                 'subjects.subject_name AS subject_name',
                 'admins.username AS username'
 
@@ -43,7 +43,7 @@ class Division extends Model
 //                'division_name' => $this->division_name,
                 'semester' => $this->semester,
                 'class_id' => $this->class_id,
-                'lecturer_id' => $this->lecturer_id,
+                'teacher_id' => $this->teacher_id,
                 'subject_id' => $this->subject_id,
                 'admin_id' => $this->admin_id
             ]);
@@ -65,7 +65,7 @@ class Division extends Model
 //                'division_name' => $this->division_name,
                 'semester' => $this->semester,
                 'class_id' => $this->class_id,
-//                'lecturer_id' => $this->lecturer_id,
+//                'teacher_id' => $this->teacher_id,
 //                'subject_id' => $this->subject_id,
                 'admin_id' => $this->admin_id
             ]);
@@ -105,16 +105,16 @@ class Division extends Model
 
     public function scopeSearch($query, $searchTerm)
     {
-        return $query->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+        return $query->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
             ->join('classes', 'divisions.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->join('admins', 'divisions.admin_id', '=', 'admins.id')
             ->where('divisions.admin_id', auth('admin')->user()->id)
             ->where(function($innerQuery) use ($searchTerm) {
-                $innerQuery->where('lecturers.lecturer_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('specializes.specialized_name', 'like', '%' . $searchTerm . '%')
+                $innerQuery->where('teachers.teacher_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('grades.grade_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('subjects.subject_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('classes.class_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('school_years.sy_name', 'like', '%' . $searchTerm . '%')
@@ -122,8 +122,8 @@ class Division extends Model
             })
             ->select([
                 'divisions.*',
-                'lecturers.lecturer_name AS lecturer_name',
-                'specializes.specialized_name AS specialized_name',
+                'teachers.teacher_name AS teacher_name',
+                'grades.grade_name AS grade_name',
                 'subjects.subject_name AS subject_name',
                 'classes.class_name AS class_name',
                 'school_years.sy_name AS sy_name',
@@ -146,14 +146,14 @@ class Division extends Model
 //            $studentsCount = Student::where('class_id', $transcript->class_id)->count();
 //            $transcriptDetailCount = TranscriptDetail::where('transcript_id', $transcript->id)->count();
 //
-//            if ($transcript->exam_times == 0 && $studentsCount > 0 && $transcriptDetailCount === 0) {
+//            if ($transcript->exam_type == 0 && $studentsCount > 0 && $transcriptDetailCount === 0) {
 //                // Nếu có student có điểm dưới 5 và không có bản ghi trong TranscriptDetail
 //                $hasUnfinishedTranscript = true;
 //                break;
 //            }
 //
-//            if ($transcript->exam_times == 1 && $transcript->isFinish() === false) {
-//                // Nếu có bản ghi Transcript với exam_times là 1 và chưa hoàn thành (isFinish() === false)
+//            if ($transcript->exam_type == 1 && $transcript->isFinish() === false) {
+//                // Nếu có bản ghi Transcript với exam_type là 1 và chưa hoàn thành (isFinish() === false)
 //                $hasUnfinishedTranscript = true;
 //                break;
 //            }
@@ -171,44 +171,102 @@ class Division extends Model
     {
         $transcripts = Transcript::where('division_id', $this->id)->get();
 
-        // Kiểm tra xem có transcript nào có exam_times bằng 0 và các transcript_detail tương ứng có điểm trên hoặc bằng 5
+        // Kiểm tra xem có transcript nào có exam_type bằng 0 và các transcript_detail tương ứng có điểm là 1, 2 hoặc 3
+        $hasCompletedTranscript0 = $transcripts->contains(function ($transcript) {
+            return $transcript->exam_type == 0 && $transcript->transcriptDetails->isNotEmpty() &&
+                $transcript->transcriptDetails->every(function ($transcriptDetail) {
+                    $note = $transcriptDetail->note;
+                    return $note == 2 || $note == 3;
+                });
+        });
+
+// Kiểm tra xem có transcript nào có exam_type bằng 1 và có ít nhất một transcript_detail có điểm là 1, 2 hoặc 3
+        $hasPendingTranscript0 = $transcripts->contains(function ($transcript) {
+            return $transcript->exam_type == 1 && $transcript->transcriptDetails->isNotEmpty() &&
+                $transcript->transcriptDetails->contains(function ($transcriptDetail) {
+                    $note = $transcriptDetail->note;
+                    return $note == 2 || $note == 3;
+                });
+        });
+
+        // Kiểm tra xem có transcript nào có exam_type bằng 0 và các transcript_detail tương ứng có điểm trên hoặc bằng 5
         $hasCompletedTranscript = $transcripts->contains(function ($transcript) {
-            return $transcript->exam_times == 0 && $transcript->transcriptDetails->isNotEmpty() &&
+            return $transcript->exam_type == 0 && $transcript->transcriptDetails->isNotEmpty() &&
                 $transcript->transcriptDetails->every(function ($transcriptDetail) {
                     return !empty($transcriptDetail->score) && $transcriptDetail->score >= 5;
                 });
         });
 
-        // Kiểm tra xem có transcript nào có exam_times bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
-        $hasPendingTranscript = $transcripts->contains(function ($transcript) {
-            return $transcript->exam_times == 1 && $transcript->transcriptDetails->isNotEmpty() &&
+        // Kiểm tra xem có transcript nào có exam_type bằng 0 và các transcript_detail tương ứng có điểm trên hoặc bằng 5 hoặc note bằng 2 hoặc 3
+        $hasCompletedTranscript2 = $transcripts->contains(function ($transcript) {
+            return $transcript->exam_type == 0 && $transcript->transcriptDetails->isNotEmpty() &&
                 $transcript->transcriptDetails->contains(function ($transcriptDetail) {
-                    return !empty($transcriptDetail->score) && $transcriptDetail->score >= 5;
+                    return !empty($transcriptDetail->score) && $transcriptDetail->score >= 5 || in_array($transcriptDetail->note, [2, 3]);
                 });
         });
 
-        // Kiểm tra xem có transcript nào có exam_times bằng 0 và chưa có transcript_detail
+        // Kiểm tra xem có transcript nào có exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+        $hasPendingTranscript = $transcripts->contains(function ($transcript) {
+            return $transcript->exam_type == 1 && $transcript->transcriptDetails->isNotEmpty() &&
+                $transcript->transcriptDetails->contains(function ($transcriptDetail) {
+                    return !empty($transcriptDetail->score) && $transcriptDetail->score ;
+                });
+        });
+
+        // Kiểm tra xem có transcript nào có exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5 hoặc note bằng 2 hoặc 3
+        $hasPendingTranscript2 = $transcripts->contains(function ($transcript) {
+            return $transcript->exam_type == 1 && $transcript->transcriptDetails->isNotEmpty() &&
+                $transcript->transcriptDetails->contains(function ($transcriptDetail) {
+                    return !empty($transcriptDetail->score) && $transcriptDetail->score || in_array($transcriptDetail->note, [2, 3]);
+                });
+        });
+
+        // Kiểm tra xem có transcript nào có exam_type bằng 0 và chưa có transcript_detail
         $hasUnfinishedTranscript1st= $transcripts->contains(function ($transcript) {
-            return $transcript->exam_times == 0  && $transcript->transcriptDetails->isEmpty();
+            return $transcript->exam_type == 0  && $transcript->transcriptDetails->isEmpty();
         });
 
         $hasUnfinishedTranscript2nd = $transcripts->contains(function ($transcript) {
-            return $transcript->exam_times == 1  && $transcript->transcriptDetails->isEmpty();
+            return $transcript->exam_type == 1  && $transcript->transcriptDetails->isEmpty();
         });
 
         if ($hasCompletedTranscript || $hasPendingTranscript) {
-            // Nếu có transcripts với exam_times bằng 0 và có transcript_details có điểm trên hoặc bằng 5
-            // hoặc có transcripts với exam_times bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+            // Nếu có transcripts với exam_type bằng 0 và có transcript_details có điểm trên hoặc bằng 5
+            // hoặc có transcripts với exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
             return 'Job Done';
         }
 
+        if ($hasCompletedTranscript2 && !$hasPendingTranscript2) {
+            // Nếu có transcripts với exam_type bằng 0 và có transcript_details có điểm trên hoặc bằng 5
+            // hoặc có transcripts với exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+            return 'Working';
+        }
+
+        if ($hasCompletedTranscript2 && $hasPendingTranscript2) {
+            // Nếu có transcripts với exam_type bằng 0 và có transcript_details có điểm trên hoặc bằng 5
+            // hoặc có transcripts với exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+            return 'Job Done';
+        }
+
+        if ($hasPendingTranscript0) {
+            // Nếu có transcripts với exam_type bằng 0 và có transcript_details có điểm trên hoặc bằng 5
+            // hoặc có transcripts với exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+            return 'Job Done';
+        }
+
+        if ($hasCompletedTranscript0) {
+            // Nếu có transcripts với exam_type bằng 0 và có transcript_details có điểm trên hoặc bằng 5
+            // hoặc có transcripts với exam_type bằng 1 và có ít nhất một transcript_detail có điểm trên hoặc bằng 5
+            return 'Working';
+        }
+
         if ($hasUnfinishedTranscript1st) {
-            // Nếu có transcripts với exam_times bằng 1 và chưa có transcript_details
+            // Nếu có transcripts với exam_type bằng 1 và chưa có transcript_details
             return 'Working';
         }
 
         if ($hasUnfinishedTranscript2nd) {
-            // Nếu có transcripts với exam_times bằng 1 và chưa có transcript_details
+            // Nếu có transcripts với exam_type bằng 1 và chưa có transcript_details
             return 'Working';
         }
         if ($transcripts->isEmpty()) {
@@ -220,11 +278,6 @@ class Division extends Model
         // thì status của division sẽ là Not Working
         return 'Working';
     }
-
-
-
-
-
 
 }
 

@@ -47,7 +47,7 @@
         Class<br> <select name="class_id" class="input-group">
             @foreach($classes as $class)
                 <option value="{{$class-> id}}">
-                    {{$class->class_name}}{{$class->sy_name}}
+                    {{$class->class_name}}_{{$class->sy_name}}
                 </option>
             @endforeach
         </select><br> </div>

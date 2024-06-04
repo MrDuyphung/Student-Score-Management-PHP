@@ -35,7 +35,7 @@
                     <tr>
                         <th>Student_Name</th>
                         <th>Class</th>
-                        <th>Specialized</th>
+                        <th>grade</th>
                         <th>Subject</th>
                         <th>Test time</th>
                         <th>Semester</th>
@@ -53,20 +53,20 @@
                             </td>
                             </td>
                             <td>
-                                {{$transcript_detail->specialized_name}}
+                                {{$transcript_detail->grade_name}}
                             </td>
 
                             <td>
                                 {{$transcript_detail->subject_name}}
                             </td>
                             <td>
-                                @if($transcript_detail -> exam_times == 0)
+                                @if($transcript_detail -> exam_type == 0)
                                     <div class="badge badge-success">1 times</div>
-                                @elseif($transcript_detail -> exam_times == 1)
+                                @elseif($transcript_detail -> exam_type == 1)
                                     <div class="badge badge-primary">2 times</div>
-                                @elseif($transcript_detail -> exam_times == 2)
+                                @elseif($transcript_detail -> exam_type == 2)
                                     <div class="badge badge-danger">Banned</div>
-                                @elseif($transcript_detail -> exam_times == 3)
+                                @elseif($transcript_detail -> exam_type == 3)
                                     <div class="badge badge-warning">Exam Skipped</div>
                                 @endif
                             </td>
@@ -106,4 +106,6 @@
                         </tr>
                     @endforeach
                 </table>
+
+
 @endsection

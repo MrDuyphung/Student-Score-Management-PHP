@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 @section('content')
     @if (session('error'))
         <div class="alert alert-danger" id="myText">
@@ -25,9 +25,9 @@
                         <th>Semester</th>
 
                         <th>Class</th>
-                        <th>Specialized</th>
+                        <th>grade</th>
                         <th>Subject</th>
-                        <th>Lecturer</th>
+                        <th>teacher</th>
                         <th>Action & Status</th>
                         <th>Point Maker</th>
                         <th></th>
@@ -41,11 +41,11 @@
                                 {{$transcript->transcript_name}}
                             </td>
                             <td>
-                                @if($transcript -> exam_times == 0)
+                                @if($transcript -> exam_type == 0)
                                     <div class="badge badge-success">1 Times</div>
-                                @elseif($transcript -> exam_times == 1)
+                                @elseif($transcript -> exam_type == 1)
                                     <div class="badge badge-info">2 Times</div>
-                                @elseif($transcript -> exam_times == 2)
+                                @elseif($transcript -> exam_type == 2)
                                     <div class="badge badge-warning">Relearn</div>
                                 @endif
                             </td>
@@ -62,13 +62,13 @@
                                 {{$transcript->class_name}}_{{$transcript->sy_name}}
                             </td>
                             <td>
-                                {{$transcript->specialized_name}}
+                                {{$transcript->grade_name}}
                             </td>
                             <td>
                                 {{$transcript->subject_name}}
                             </td>
                             <td>
-                                {{$transcript->lecturer_name}}
+                                {{$transcript->teacher_name}}
                             </td>
 {{--                            <td>--}}
 
@@ -83,9 +83,9 @@
                                     <div class="badge badge-success">Finished</div>
 {{--                                    <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
                                 @else
-                                    @if($transcript->exam_times == 0)
+                                    @if($transcript->exam_type == 0)
                                         <a class="btn btn-outline-success" href="{{route('transdetail.create', ['transcript_id' => $transcript->id])}}">Add Point</a>
-                                    @elseif($transcript->exam_times == 1)
+                                    @elseif($transcript->exam_type == 1)
                                         @if($transcript->transcriptDetails->where('transcript_id', $transcript->id)->count() > 0)
                                             <div class="badge badge-success">Finished</div>
 {{--                                            <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
@@ -100,7 +100,7 @@
                                 <form method="post" action="{{ route('transcript.destroy', $transcript -> id ) }}" id="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="mdi mdi-delete badge badge-danger" type="submit" onclick="return confirmDelete();">Delete</button>
+                                    <button class="menu-icon; mdi mdi-delete badge badge-danger" type="submit" onclick="return confirmDelete();">Delete</button>
                                 </form>
 
                                 <script>

@@ -37,7 +37,8 @@ class Student extends Model implements \Illuminate\Contracts\Auth\Authenticatabl
             ->select([
                 'students.*',
                 'classes.class_name AS class_name',
-                'school_years.sy_number AS sy_number',
+                'school_years.sy_start AS sy_start',
+                'school_years.sy_end AS sy_end',
                 'school_years.sy_name AS sy_name'
             ]);
 

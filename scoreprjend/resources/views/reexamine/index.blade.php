@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 
 @section('content')
     @if (session('error'))
@@ -22,7 +22,7 @@
         <tr>
             <th>Student</th>
             <th>Class</th>
-            <th>Specialized</th>
+            <th>grade</th>
             <th>Subject</th>
             <th>Semester</th>
             <th>New Score</th>
@@ -36,7 +36,7 @@
             <tr>
                 <td>{{ $reexamine->student_name }}</td>
                 <td>{{ $reexamine->class_name }}_{{ $reexamine->sy_name }}</td>
-                <td>{{ $reexamine->specialized_name }}</td>
+                <td>{{ $reexamine->grade_name }}</td>
                 <td>{{ $reexamine->subject_name }}</td>
                 <td>
                     @if($reexamine -> semester == 0)

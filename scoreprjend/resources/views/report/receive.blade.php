@@ -9,10 +9,10 @@
         <tr>
             <th>Student</th>
             <th>Class</th>
-            <th>Specialized</th>
+            <th>grade</th>
             <th>Subject</th>
             <th>Semester</th>
-            <th>Grading Lecturer</th>
+            <th>Grading teacher</th>
             <th>Status</th>
             <th>Admin Action</th>
         </tr>
@@ -23,7 +23,7 @@
             <tr>
                 <td>{{ $report->student_name }}</td>
                 <td>{{ $report->class_name }}_{{ $report->sy_name }}</td>
-                <td>{{ $report->specialized_name }}</td>
+                <td>{{ $report->grade_name }}</td>
                 <td>{{ $report->subject_name }}</td>
                 <td>
                     @if($report -> semester == 0)
@@ -34,12 +34,12 @@
                         <div class="badge badge-warning">Extra Semester</div>
                     @endif
                 </td>
-                <td>{{ $report->lecturer_name }}</td>
+                <td>{{ $report->teacher_name }}</td>
                 <td>
                     @if($report->status == 0)
                         <div class="badge badge-warning">Pending</div>
                     @elseif($report->status == 1)
-                        <div class="badge badge-info">Accepted sent to Lecturer</div>
+                        <div class="badge badge-info">Accepted sent to teacher</div>
                     @elseif($report->status == 2)
                         <div class="badge badge-danger">Rejected</div>
                     @elseif($report->status == 3)

@@ -11,7 +11,7 @@
         <tr>
             <th>Student</th>
             <th>Class</th>
-            <th>Specialized</th>
+            <th>grade</th>
             <th>Subject</th>
             <th>Test times</th>
             <th>Semester</th>
@@ -26,16 +26,16 @@
             <tr>
                 <td>{{ $reexamine->student_name }}</td>
                 <td>{{ $reexamine->class_name }}_{{ $reexamine->sy_name }}</td>
-                <td>{{ $reexamine->specialized_name }}</td>
+                <td>{{ $reexamine->grade_name }}</td>
                 <td>{{ $reexamine->subject_name }}</td>
                 <td>
-                    @if($reexamine -> exam_times == 0)
+                    @if($reexamine -> exam_type == 0)
                         <div class="badge badge-success">1 times</div>
-                    @elseif($reexamine -> exam_times == 1)
+                    @elseif($reexamine -> exam_type == 1)
                         <div class="badge badge-primary">2 times</div>
-                    @elseif($reexamine -> exam_times == 2)
+                    @elseif($reexamine -> exam_type == 2)
                         <div class="badge badge-danger">Banned</div>
-                    @elseif($reexamine -> exam_times == 3)
+                    @elseif($reexamine -> exam_type == 3)
                         <div class="badge badge-warning">Exam Skipped</div>
                     @endif
                 </td>

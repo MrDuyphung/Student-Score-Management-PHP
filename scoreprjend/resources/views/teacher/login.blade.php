@@ -5,11 +5,11 @@
 {{--    <meta name="viewport"--}}
 {{--          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">--}}
 {{--    <meta http-equiv="X-UA-Compatible" content="ie=edge">--}}
-{{--    <title>Lecturer Login</title>--}}
+{{--    <title>Teacher Login</title>--}}
 {{--</head>--}}
 {{--<body>--}}
-{{--<h3> Login as Lecturer </h3>--}}
-{{--        <form action="{{ route('lecturer.loginProcess') }}" method="post">--}}
+{{--<h3> Login as Teacher </h3>--}}
+{{--        <form action="{{ route('teacher.loginProcess') }}" method="post">--}}
 {{--            @csrf--}}
 {{--        Email: <input type="email" name="email"><br>--}}
 {{--            Password: <input type="password" name="password"><br>--}}
@@ -23,7 +23,7 @@
         <div class="row w-100">
             <div class="col-lg-4 mx-auto">
                 <div class="auto-form-wrapper">
-                    <form action="{{ route('lecturer.loginProcess') }}" method="post">
+                    <form action="{{ route('teacher.loginProcess') }}" method="post">
 @csrf
                         <div class="form-group" >
 
@@ -49,14 +49,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-primary submit-btn btn-block">Login as Lecturer</button>
+                            <button class="btn btn-primary submit-btn btn-block">Login as teacher</button>
                         </div>
                         <div class="form-group d-flex justify-content-between">
                             <div class="form-check form-check-flat mt-0">
 {{--                                <label class="form-check-label">--}}
 {{--                                    <input type="checkbox" class="form-check-input" checked> Keep me signed in </label>--}}
                             </div>
-                            <a href="{{ route('lecturer.forgotPasswords') }}" class="text-small forgot-password text-black">Forgot Password</a>
+                            <a href="{{ route('teacher.forgotPasswords') }}" class="text-small forgot-password text-black">Forgot Password</a>
                         </div>
 {{--                        <div class="form-group">--}}
 {{--                            <button class="btn btn-block g-login">--}}

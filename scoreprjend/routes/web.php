@@ -16,26 +16,26 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Classes;
 use App\Models\Student;
 use App\Models\Report;
-use App\Models\Lecturer;
+use App\Models\Teacher;
 use App\Models\Division;
 use App\Models\TranscriptDetail;
 Route::middleware(['adminMiddleware'])->get('/', function () {
     $studentCount = Student::count();
 //    $reportCount = Report::where('status','=', 0)->count();
-    $lecturerCount = Lecturer::count();
+    $teacherCount = Teacher::count();
     $divisionCount = Division::count();
     $re = null;
 
 
     $transcriptBelow5Count = TranscriptDetail::where('score', '<', 5)
         ->whereHas('transcript', function ($query) {
-            $query->where('exam_times', 0);
+            $query->where('exam_type', 0);
         })
         ->count();
 
     $transcriptAbove5Count = TranscriptDetail::where('score', '>=', 5)
         ->whereHas('transcript', function ($query) {
-            $query->where('exam_times', 0);
+            $query->where('exam_type', 0);
         })
         ->count();
 
@@ -44,7 +44,7 @@ Route::middleware(['adminMiddleware'])->get('/', function () {
             $query->where('note', 2);
         })
         ->whereHas('transcript', function ($query) {
-            $query->where('exam_times', 0);
+            $query->where('exam_type', 0);
         })
         ->count();
     $transcriptNoScoreCount2 = TranscriptDetail::whereNull('score')
@@ -52,7 +52,7 @@ Route::middleware(['adminMiddleware'])->get('/', function () {
             $query->where('note', 3);
         })
         ->whereHas('transcript', function ($query) {
-            $query->where('exam_times', 0);
+            $query->where('exam_type', 0);
         })
         ->count();
 
@@ -66,7 +66,7 @@ Route::middleware(['adminMiddleware'])->get('/', function () {
     return view('dashboard', [
         'studentCount' => $studentCount,
 //        'reportCount' => $reportCount,
-        'lecturerCount' => $lecturerCount,
+        'teacherCount' => $teacherCount,
         'divisionCount' => $divisionCount,
         'classWithStudentsCount' => $classWithStudentsCount,
         'classWithoutStudentsCount' => $classWithoutStudentsCount,
@@ -75,10 +75,13 @@ Route::middleware(['adminMiddleware'])->get('/', function () {
         'transcriptNoScoreCount1' => $transcriptNoScoreCount1,
         'transcriptNoScoreCount2' => $transcriptNoScoreCount2,
         'result' => $re,
+        'abf'=> null,
+        'abe' => null,
         'abd' => null,
         'abc'=> null
     ]);
 });
+
 
 Route::get('/login-admin', [\App\Http\Controllers\AdminController::class, 'login'])-> name('admin.login');
 Route::post('/login-admin', [\App\Http\Controllers\AdminController::class, 'loginProcess'])-> name('admin.loginProcess');
@@ -86,9 +89,9 @@ Route::get('/logout-admin', [\App\Http\Controllers\AdminController::class, 'logo
 Route::put('/query', [\App\Http\Controllers\TranscriptDetailController::class, 'query'])->name('query');
 
 
-Route::get('/login-lecturer', [\App\Http\Controllers\LecturerController::class, 'login'])-> name('lecturer.login');
-Route::post('/login-lecturer', [\App\Http\Controllers\LecturerController::class, 'loginProcess'])-> name('lecturer.loginProcess');
-Route::get('/logout-lecturer', [\App\Http\Controllers\LecturerController::class, 'logout'])-> name('lecturer.logout');
+Route::get('/login-teacher', [\App\Http\Controllers\TeacherController::class, 'login'])-> name('teacher.login');
+Route::post('/login-teacher', [\App\Http\Controllers\TeacherController::class, 'loginProcess'])-> name('teacher.loginProcess');
+Route::get('/logout-teacher', [\App\Http\Controllers\TeacherController::class, 'logout'])-> name('teacher.logout');
 
 Route::get('/login-student', [\App\Http\Controllers\StudentController::class, 'login'])-> name('student.login');
 Route::post('/login-student', [\App\Http\Controllers\StudentController::class, 'loginProcess'])-> name('student.loginProcess');
@@ -97,8 +100,8 @@ Route::get('/logout-student', [\App\Http\Controllers\StudentController::class, '
 Route::get('/forgot-password', [\App\Http\Controllers\StudentController::class, 'showForgotPasswordForm'])->name('student.forgotPassword');
 Route::post('/forgot-password', [\App\Http\Controllers\StudentController::class, 'sendResetLinkEmail'])->name('student.sendResetLinkEmail');
 
-Route::get('/forgot-passwords', [\App\Http\Controllers\LecturerController::class, 'showForgotPasswordForm'])->name('lecturer.forgotPasswords');
-Route::post('/forgot-passwords', [\App\Http\Controllers\LecturerController::class, 'sendResetLinkEmail'])->name('lecturer.sendResetLinkEmails');
+Route::get('/forgot-passwords', [\App\Http\Controllers\TeacherController::class, 'showForgotPasswordForm'])->name('teacher.forgotPasswords');
+Route::post('/forgot-passwords', [\App\Http\Controllers\TeacherController::class, 'sendResetLinkEmail'])->name('teacher.sendResetLinkEmails');
 
 //Route::get('/demo',[\App\Http\Controllers\controllerprj::class,'index'])->name('demo');
 //Route::get('/demo/login',[\App\Http\Controllers\controllerprj::class, 'login'])->name('login');
@@ -114,15 +117,17 @@ Route::middleware(['adminMiddleware'])->prefix('/sy')->group( function (){
     Route::delete('/{id}', [\App\Http\Controllers\SchoolYearController::class, 'destroy'])->name('sy.destroy');
 });
 
-Route::middleware(['adminMiddleware'])->prefix('/specialized')->group( function (){
-    Route::get('/',[\App\Http\Controllers\SpecializeController::class,'index'])->name('specialized.index');
+Route::middleware(['adminMiddleware'])->prefix('/grade')->group( function (){
+    Route::get('/',[\App\Http\Controllers\GradeController::class,'index'])->name('grade.index');
+    Route::get('/{id}/check-class', [\App\Http\Controllers\GradeController::class,'checkClass'])->name('grade.checkClass');
+    Route::get('/check-students/{class_id}', [\App\Http\Controllers\GradeController::class,'checkStudentFromClass'])->name('grade.checkStudent');
 
-    Route::get('/create', [\App\Http\Controllers\SpecializeController::class, 'create'])->name('specialized.create');
-    Route::post('/create', [\App\Http\Controllers\SpecializeController::class, 'store'])->name('specialized.store');
+    Route::get('/create', [\App\Http\Controllers\GradeController::class, 'create'])->name('grade.create');
+    Route::post('/create', [\App\Http\Controllers\GradeController::class, 'store'])->name('grade.store');
 
-    Route::get('/{id}/edit', [\App\Http\Controllers\SpecializeController::class, 'edit'])->name('specialized.edit');
-    Route::put('/{id}/edit', [\App\Http\Controllers\SpecializeController::class, 'update'])->name('specialized.update');
-    Route::delete('/{id}', [\App\Http\Controllers\SpecializeController::class, 'destroy'])->name('specialized.destroy');
+    Route::get('/{id}/edit', [\App\Http\Controllers\GradeController::class, 'edit'])->name('grade.edit');
+    Route::put('/{id}/edit', [\App\Http\Controllers\GradeController::class, 'update'])->name('grade.update');
+    Route::delete('/{id}', [\App\Http\Controllers\GradeController::class, 'destroy'])->name('grade.destroy');
 });
 
 Route::middleware(['adminMiddleware'])->prefix('/student')->group( function (){
@@ -154,17 +159,17 @@ Route::middleware(['adminMiddleware'])->prefix('/class')->group(function (){
     Route::delete('/{id}', [\App\Http\Controllers\ClassesController::class, 'destroy'])->name('class.destroy');
 });
 
-Route::middleware(['adminMiddleware'])->prefix('/lecturer')->group(function (){
+Route::middleware(['adminMiddleware'])->prefix('/teacher')->group(function (){
 
-    Route::get('/', [\App\Http\Controllers\LecturerController::class, 'index'])->name('lecturer.index');
-    Route::get('/create', [\App\Http\Controllers\LecturerController::class, 'create'])->name('lecturer.create');
-    Route::post('/create', [\App\Http\Controllers\LecturerController::class, 'store'])->name('lecturer.store');
-    Route::get('/{id}/edit', [\App\Http\Controllers\LecturerController::class, 'edit'])->name('lecturer.edit');
-    Route::put('/{id}/edit', [\App\Http\Controllers\LecturerController::class, 'update'])->name('lecturer.update');
-    Route::delete('/{id}', [\App\Http\Controllers\LecturerController::class, 'destroy'])->name('lecturer.destroy');
+    Route::get('/', [\App\Http\Controllers\TeacherController::class, 'index'])->name('teacher.index');
+    Route::get('/create', [\App\Http\Controllers\TeacherController::class, 'create'])->name('teacher.create');
+    Route::post('/create', [\App\Http\Controllers\TeacherController::class, 'store'])->name('teacher.store');
+    Route::get('/{id}/edit', [\App\Http\Controllers\TeacherController::class, 'edit'])->name('teacher.edit');
+    Route::put('/{id}/edit', [\App\Http\Controllers\TeacherController::class, 'update'])->name('teacher.update');
+    Route::delete('/{id}', [\App\Http\Controllers\TeacherController::class, 'destroy'])->name('teacher.destroy');
 });
 
-Route::middleware(['lecturerMiddleware'])->prefix('/transcript')->group(function (){
+Route::middleware(['teacherMiddleware'])->prefix('/transcript')->group(function (){
 
     Route::get('/', [\App\Http\Controllers\TranscriptController::class, 'index'])->name('transcript.index');
     Route::get('/create/{division_id}', [\App\Http\Controllers\TranscriptController::class, 'create'])->name('transcript.create');
@@ -183,9 +188,12 @@ Route::middleware(['adminMiddleware'])->prefix('/division')->group(function (){
     Route::get('/{id}/edit', [\App\Http\Controllers\DivisionController::class, 'edit'])->name('division.edit');
     Route::put('/{id}/edit', [\App\Http\Controllers\DivisionController::class, 'update'])->name('division.update');
     Route::delete('/{id}', [\App\Http\Controllers\DivisionController::class, 'destroy'])->name('division.destroy');
+    Route::get('/{id}/check', [\App\Http\Controllers\DivisionController::class, 'checkTranscript'])->name('division.checkTranscript');
+    Route::get('/check-students-point/{transcript_id}', [\App\Http\Controllers\DivisionController::class, 'checkTransDetail'])->name('division.checkTransDetail');
+
 });
 
-Route::middleware(['lecturerMiddleware'])->prefix('/divisions')->group(function (){
+Route::middleware(['teacherMiddleware'])->prefix('/divisions')->group(function (){
     Route::get('/show', [\App\Http\Controllers\DivisionController::class, 'show'])->name('division.show');
 
 });
@@ -205,7 +213,7 @@ Route::middleware(['studentMiddleware'])->prefix('/reexamines')->group(function 
     Route::get('/show', [\App\Http\Controllers\ReexamineController::class, 'show'])->name('reexamine.show');
 });
 
-Route::middleware(['lecturerMiddleware'])->prefix('/reexamine')->group(function (){
+Route::middleware(['teacherMiddleware'])->prefix('/reexamine')->group(function (){
     Route::get('/', [\App\Http\Controllers\ReexamineController::class, 'index'])->name('reexamine.index');
     Route::get('/create', [\App\Http\Controllers\ReexamineController::class, 'create'])->name('reexamine.create');
     Route::post('/create', [\App\Http\Controllers\ReexamineController::class, 'store'])->name('reexamine.store');
@@ -218,20 +226,20 @@ Route::middleware(['adminMiddleware'])->prefix('/reports')->group(function (){
     Route::get('/receive', [\App\Http\Controllers\ReportController::class, 'show'])->name('report.receive');
     Route::put('/update-report/{id}', [\App\Http\Controllers\ReportController::class, 'updateReport'])->name('report.update');});
 
-Route::middleware(['lecturerMiddleware'])->prefix('/reportss')->group(function () {
-    Route::get('/received', [\App\Http\Controllers\ReportController::class, 'showLecturer'])->name('report.received');
+Route::middleware(['teacherMiddleware'])->prefix('/reportss')->group(function () {
+    Route::get('/received', [\App\Http\Controllers\ReportController::class, 'showteacher'])->name('report.received');
 });
 
-    //Route::middleware('lecturer')->group(function () {
-//    Route::get('/profile', [\App\Http\Controllers\LecturerController::class, 'profile'])->name('lecturer.profile');
-//    Route::put('/profile/update',[\App\Http\Controllers\LecturerController::class, 'updateProfile'])->name('lecturer.profile.update');
+    //Route::middleware('teacher')->group(function () {
+//    Route::get('/profile', [\App\Http\Controllers\TeacherController::class, 'profile'])->name('teacher.profile');
+//    Route::put('/profile/update',[\App\Http\Controllers\TeacherController::class, 'updateProfile'])->name('teacher.profile.update');
 //});
 
-//Route::middleware(['lecturer'])->group(function () {
-//    Route::get('/profile', [\App\Http\Controllers\LecturerController::class, 'profile'])->name('lecturer.profile');
+//Route::middleware(['teacher'])->group(function () {
+//    Route::get('/profile', [\App\Http\Controllers\TeacherController::class, 'profile'])->name('teacher.profile');
 //});
 
-Route::middleware(['lecturerMiddleware'])->prefix('/transdetail')->group(function (){
+Route::middleware(['teacherMiddleware'])->prefix('/transdetail')->group(function (){
 
     Route::get('/{transcript_id}', [\App\Http\Controllers\TranscriptDetailController::class, 'index'])->name('transdetail.index');
 //    Route::get('/search', [\App\Http\Controllers\TranscriptDetailController::class, 'search'])->name('transdetail.search');

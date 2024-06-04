@@ -1,3 +1,5 @@
+
+
 <script src="jquery.min.js"></script>
 <script src="bootstrap.min.js"></script>
 @if(session('student'))
@@ -42,9 +44,16 @@
                         </div>
                     </div>
                 </div>
+                <div id="clock">
+                    <center>
+                        <span id="date"></span><br>
+                        <span id="time"></span>
+                    </center>
+                </div>
                 {{--                <button class="btn btn-success btn-block">New Project <i class="mdi mdi-plus"></i>--}}
                 {{--                </button>--}}
             </div>
+
         </li>
         {{--        <li class="nav-item ">--}}
         {{--            <a class="nav-link" href="{{url('/')}}">--}}
@@ -59,15 +68,15 @@
         {{--            </a>--}}
         {{--        </li>--}}
         {{--        <li class="nav-item ">--}}
-        {{--            <a class="nav-link" href="{{route('specialized.index')}}">--}}
+        {{--            <a class="nav-link" href="{{route('grade.index')}}">--}}
         {{--                <i class="menu-icon mdi mdi-chart-line"></i>--}}
-        {{--                <span class="menu-title">Specialized Management</span>--}}
+        {{--                <span class="menu-title">grade Management</span>--}}
         {{--            </a>--}}
         {{--        </li>--}}
         {{--        <li class="nav-item ">--}}
-        {{--            <a class="nav-link" href="{{route('lecturer.index')}}">--}}
+        {{--            <a class="nav-link" href="{{route('teacher.index')}}">--}}
         {{--                <i class="menu-icon mdi mdi-emoticon"></i>--}}
-        {{--                <span class="menu-title">Lecturer List</span>--}}
+        {{--                <span class="menu-title">Teacher List</span>--}}
         {{--            </a>--}}
         {{--        </li>--}}
         {{--        <li class="nav-item ">--}}
@@ -95,17 +104,44 @@
         {{--            </a>--}}
         {{--        </li>--}}
         {{--        <li class="nav-item ">--}}
-        {{--            <a class="nav-link" href="{{route('lecturer.profile')}}">--}}
+        {{--            <a class="nav-link" href="{{route('teacher.profile')}}">--}}
         {{--                <i class="menu-icon mdi mdi-account"></i>--}}
         {{--                <span class="menu-title">My Profile</span>--}}
         {{--            </a>--}}
         {{--        </li>--}}
+
         <li class="nav-item active ">
             <a class="nav-link" href="{{route('transdetail.show')}}">
                 <i class="menu-icon mdi mdi-account-badge-horizontal"></i>
                 <span class="menu-title">My Academic Score</span>
             </a>
         </li>
+        <li class="nav-item active ">
+            <a class="nav-link" >
+                <i class="menu-icon mdi mdi-book-information-variant"></i>
+                <span class="menu-title">My Schedule</span>
+            </a>
+        </li>
+        <li class="nav-item active ">
+            <a class="nav-link" >
+                <i class="menu-icon mdi mdi-feather"></i>
+                <span class="menu-title">Fee Collection</span>
+            </a>
+        </li>
+        <li class="nav-item active ">
+            <a class="nav-link" >
+                <i class="menu-icon mdi mdi-spellcheck"></i>
+                <span class="menu-title">grade Transfer</span>
+            </a>
+        </li>
+        <li class="nav-item active ">
+            <a class="nav-link" >
+                <i class="menu-icon mdi mdi-tablet-dashboard"></i>
+                <span class="menu-title">My Attendance Sheet</span>
+            </a>
+        </li>
+
+
 
 {{--        <li class="nav-item active ">--}}
 {{--            <a class="nav-link" href="{{route('student.profile')}}">--}}
@@ -139,10 +175,10 @@
         {{--            <a class="nav-link" href="{{route('sy.index')}}">School Year Management</a>--}}
         {{--          </li>--}}
         {{--          <li class="nav-item }">--}}
-        {{--            <a class="nav-link" href="{{route('specialized.index')}}">Specialized Management</a>--}}
+        {{--            <a class="nav-link" href="{{route('grade.index')}}">grade Management</a>--}}
         {{--          </li>--}}
         {{--          <li class="nav-item ">--}}
-        {{--            <a class="nav-link" href="{{route('lecturer.index')}}">Lecturer List</a>--}}
+        {{--            <a class="nav-link" href="{{route('teacher.index')}}">Teacher List</a>--}}
         {{--          </li>--}}
         {{--        </ul>--}}
         {{--      </div>--}}

@@ -1,4 +1,4 @@
-{{--@extends('layout.masterLecturer')--}}
+{{--@extends('layout.masterteacher')--}}
 
 {{--@section('content')--}}
 {{--    <form method="post" action="{{ route('transdetail.update', $transcript_id) }}">--}}
@@ -51,13 +51,13 @@
 
 {{--                                                                                    <label class="label">Test Times</label>--}}
 {{--                                            <td>--}}
-{{--                                                @if($transcript -> exam_times == 0)--}}
+{{--                                                @if($transcript -> exam_type == 0)--}}
 {{--                                                    <div class="badge badge-success">1 Times</div>--}}
-{{--                                                @elseif($transcript -> exam_times == 1)--}}
+{{--                                                @elseif($transcript -> exam_type == 1)--}}
 {{--                                                    <div class="badge badge-primary">2 Times</div>--}}
-{{--                                                @elseif($transcript -> exam_times == 2)--}}
+{{--                                                @elseif($transcript -> exam_type == 2)--}}
 {{--                                                    <div class="badge badge-danger">Relearn</div>--}}
-{{--                                                                                                @elseif($transcript -> exam_times == 3)--}}
+{{--                                                                                                @elseif($transcript -> exam_type == 3)--}}
 {{--                                                                                                    <div class="badge badge-warning">Exam Skipped</div>--}}
 {{--                                                @endif--}}
 {{--                                            </td>--}}
@@ -166,11 +166,11 @@
 {{--                    <tr>--}}
 {{--                        <td>Test times:</td>--}}
 {{--                        <td>--}}
-{{--                            <select name="exam_times" class="input-group">--}}
-{{--                                <option value="0" @if($transcript_detail->exam_times == 0) {{ 'selected' }} @endif>1 times</option>--}}
-{{--                                <option value="1" @if($transcript_detail->exam_times == 1) {{ 'selected' }} @endif>2 times</option>--}}
-{{--                                <option value="2" @if($transcript_detail->exam_times == 2) {{ 'selected' }} @endif>Banned</option>--}}
-{{--                                <option value="3" @if($transcript_detail->exam_times == 3) {{ 'selected' }} @endif>Exam Skipped</option>--}}
+{{--                            <select name="exam_type" class="input-group">--}}
+{{--                                <option value="0" @if($transcript_detail->exam_type == 0) {{ 'selected' }} @endif>1 times</option>--}}
+{{--                                <option value="1" @if($transcript_detail->exam_type == 1) {{ 'selected' }} @endif>2 times</option>--}}
+{{--                                <option value="2" @if($transcript_detail->exam_type == 2) {{ 'selected' }} @endif>Banned</option>--}}
+{{--                                <option value="3" @if($transcript_detail->exam_type == 3) {{ 'selected' }} @endif>Exam Skipped</option>--}}
 {{--                            </select>--}}
 {{--                        </td>--}}
 {{--                    </tr>--}}
@@ -187,7 +187,7 @@
 {{--        @endforeach--}}
 {{--    </form>--}}
 {{--@endsection--}}
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 
 @section('content')
     <form method="post" action="{{ route('transdetail.update', $id) }}">
@@ -241,13 +241,13 @@
 
 
 {{--                                            <td>--}}
-{{--                                                @if($transcript -> exam_times == 0)--}}
+{{--                                                @if($transcript -> exam_type == 0)--}}
 {{--                                                    <div class="badge badge-success">1 Times</div>--}}
-{{--                                                @elseif($transcript -> exam_times == 1)--}}
+{{--                                                @elseif($transcript -> exam_type == 1)--}}
 {{--                                                    <div class="badge badge-primary">2 Times</div>--}}
-{{--                                                @elseif($transcript -> exam_times == 2)--}}
+{{--                                                @elseif($transcript -> exam_type == 2)--}}
 {{--                                                    <div class="badge badge-danger">Relearn</div>--}}
-{{--                                                                                                @elseif($transcript -> exam_times == 3)--}}
+{{--                                                                                                @elseif($transcript -> exam_type == 3)--}}
 {{--                                                                                                    <div class="badge badge-warning">Exam Skipped</div>--}}
 {{--                                                @endif--}}
 {{--                                            </td>--}}

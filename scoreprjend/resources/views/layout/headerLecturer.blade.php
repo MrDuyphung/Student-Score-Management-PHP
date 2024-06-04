@@ -27,7 +27,7 @@
 {{--                    <i class="mdi mdi-point-of-sale"></i>Student Score</a>--}}
 {{--            </li>--}}
             <li class="nav-item d-none d-md-flex">
-                <a href="{{ route('lecturer.logout') }}" class="nav-link">
+                <a href="{{ route('teacher.logout') }}" class="nav-link">
                     <i class="mdi mdi-login"></i>Logout</a>
             </li>
 {{--            <li class="nav-item dropdown d-none d-lg-flex">--}}
@@ -119,8 +119,8 @@
             <li class="nav-item dropdown d-none d-xl-inline-block">
                 <a class="" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="">
                     <span class="profile-text d-none d-md-inline-flex">
-                            @if(Auth::guard('lecturer')->check())
-                                <p class="lecturer_name">{{ Auth::guard('lecturer')->user()->lecturer_name }}</p>
+                            @if(Auth::guard('teacher')->check())
+                                <p class="teacher_name">{{ Auth::guard('teacher')->user()->teacher_name }}</p>
                             @endif
                         </span>
                     <img class="img-xs rounded-circle" src="{{ url('assets/images/faces/avt.jpg') }}" alt="Profile image"> </a>

@@ -45,26 +45,50 @@ class SchoolYearController extends Controller
 //     */
     public function store(StoreSchoolYearRequest $request)
     {
-        $existingSy = SchoolYear::where('sy_number', $request->sy_number)
-            ->orwhere('sy_name', $request->sy_name)
+        $syStart = $request->sy_start;
+        $syEnd = $request->sy_end;
+        $syName = $request->sy_name;
+        $diffYears = $syEnd - $syStart;
+
+        $errors = [];
+
+        // Kiểm tra điều kiện sy_end và sy_start
+        if ($syEnd < $syStart) {
+            $errors[] = "End Year Can't be smaller than Start Year";
+        }
+
+        if ($diffYears > 5) {
+            $errors[] = "Out of year range";
+        }
+
+        // Kiểm tra trùng lặp
+        $existingSy = SchoolYear::where('sy_start', $syStart)
+            ->where('sy_end', $syEnd)
+            ->where('sy_name', $syName)
             ->exists();
 
         if ($existingSy) {
-            Session::flash('error', 'Record already exists.');
+            $errors[] = "Record already exists.";
+        }
+
+        // Xử lý lỗi
+        if (count($errors) > 0) {
+            Session::flash('error', implode(', ', $errors));
             return Redirect::route('sy.index');
         }
 
-
+        // Lưu trữ dữ liệu
         $obj = new SchoolYear();
-        $obj->sy_number = $request->sy_number;
-        $obj->sy_name = $request->sy_name;
+        $obj->sy_start = $syStart;
+        $obj->sy_end = $syEnd;
+        $obj->sy_name = $syName;
 
-        $obj->save(); // Sử dụng phương thức save() để lưu đối tượng vào cơ sở dữ liệu.
+        $obj->save();
 
         Session::flash('success', 'Added New Record');
         return Redirect::route('sy.index');
-
     }
+
 //
 //    /**
 //     * Display the specified resource.
@@ -97,7 +121,8 @@ class SchoolYearController extends Controller
     {
         $obj = new SchoolYear();
         $obj->id = $request->id;
-        $obj->sy_number = $request->sy_number;
+        $obj->sy_start= $request->sy_start;
+        $obj->sy_end = $request->sy_end;
         $obj->sy_name = $request->sy_name;
         $obj->updateSchoolYear();
         return Redirect::route('sy.index');

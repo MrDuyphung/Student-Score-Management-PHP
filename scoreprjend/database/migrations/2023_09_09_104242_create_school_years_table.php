@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
-            $table->string('sy_number');
+            $table->string('sy_start');
+            $table->string('sy_end');
             $table->string('sy_name');
         });
     }

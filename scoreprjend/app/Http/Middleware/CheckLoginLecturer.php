@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckLoginLecturer
+class CheckLoginteacher
 {
     /**
      * Handle an incoming request.
@@ -16,9 +16,9 @@ class CheckLoginLecturer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (session()->has('lecturer')){
+        if (session()->has('teacher')){
             return $next($request);
         }
-return Redirect::route('lecturer.login');
+return Redirect::route('teacher.login');
     }
 }

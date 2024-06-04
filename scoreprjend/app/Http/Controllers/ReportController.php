@@ -7,7 +7,7 @@ use App\Models\Report;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
 use App\Models\SchoolYear;
-use App\Models\Specialize;
+use App\Models\grade;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\TranscriptDetail;
@@ -64,9 +64,9 @@ class ReportController extends Controller
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
 
             ->select([
                 'reports.*',
@@ -76,9 +76,9 @@ class ReportController extends Controller
                 'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'school_years.sy_name AS sy_name'
             ])
             ->get();
@@ -86,10 +86,10 @@ class ReportController extends Controller
         return view('report.receive', ['reports' => $reports]);
     }
 
-    public function showLecturer()
+    public function showteacher()
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Lấy thông tin của sinh viên đang đăng nhập
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Lấy thông tin của sinh viên đang đăng nhập
+        $teacherId = $teacher->id;
 
         $reports = DB::table('reports')
             ->join('transcript_details', 'reports.transcriptdetail_id', '=', 'transcript_details.id')
@@ -98,10 +98,10 @@ class ReportController extends Controller
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
-            ->where('lecturers.id', $lecturerId)
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
+            ->where('teachers.id', $teacherId)
             ->select([
                 'reports.*',
                 'transcript_details.*',
@@ -109,9 +109,9 @@ class ReportController extends Controller
                 'students.student_name AS student_name',
                 'classes.class_name AS class_name',
                 'divisions.*',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'school_years.sy_name AS sy_name'
             ])
             ->get();
@@ -131,8 +131,8 @@ class ReportController extends Controller
 //        $classes = $objClass->index();
 //        $objSubject = new Subject();
 //        $subjects = $objSubject->index();
-//        $objSpecialize = new Specialize();
-//        $specializes = $objSpecialize->index();
+//        $objgrade = new grade();
+//        $grades = $objgrade->index();
 //        $objSy = new SchoolYear();
 //        $school_years = $objSy->index();
 //        $objReport = new Report();
@@ -142,7 +142,7 @@ class ReportController extends Controller
 //            'reports' => $reports,
 //            'students' => $students,
 //            'subjects' => $subjects,
-//            'specializes' => $specializes,
+//            'grades' => $grades,
 //            'school_years' => $school_years,
 //            'classes' => $classes,
 //            'id' => $objReport->id
@@ -225,14 +225,14 @@ class ReportController extends Controller
             // Nếu đã tồn tại, hiển thị thông báo lỗi
             Session::flash('error', 'This Report Has Exists.');
         } else {
-            // Nếu không tồn tại, truy vấn bảng transcript_details để kiểm tra exam_times
+            // Nếu không tồn tại, truy vấn bảng transcript_details để kiểm tra exam_type
             $transcriptDetail = TranscriptDetail::where('id', $request->transcriptdetail_id)->first();
 
-            if ($transcriptDetail && ($transcriptDetail->exam_times === 2 || $transcriptDetail->exam_times === 3)) {
-                // Nếu exam_times là 2 hoặc 3, hiển thị thông báo lỗi
+            if ($transcriptDetail && ($transcriptDetail->exam_type === 2 || $transcriptDetail->exam_type === 3)) {
+                // Nếu exam_type là 2 hoặc 3, hiển thị thông báo lỗi
                 Session::flash('error', 'If you got banned or you skip the exams, you cant make a report.');
             } else {
-                // Nếu không tồn tại hoặc exam_times không phải là 2 hoặc 3, thêm bản ghi mới
+                // Nếu không tồn tại hoặc exam_type không phải là 2 hoặc 3, thêm bản ghi mới
                 $obj = new Report();
                 $obj->id = $request->id;
                 $obj->transcriptdetail_id = $request->transcriptdetail_id;

@@ -17,16 +17,16 @@ class Transcript extends Model
         $transcript = DB::table('transcripts')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
             ->join('classes', 'divisions.class_id', '=', 'classes.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
 
             ->select(['transcripts.*',
                 'divisions.*',
                 'classes.class_name AS class_name',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name'
+                'grades.grade_name AS grade_name'
 
             ])
 
@@ -43,7 +43,7 @@ class Transcript extends Model
 
             ->insert([
                 'transcript_name' => $this->transcript_name,
-                'exam_times' => $this->exam_times,
+                'exam_type' => $this->exam_type,
                 'division_id' => $this->division_id,
 
 
@@ -64,7 +64,7 @@ class Transcript extends Model
             ->where('id', $this->id)
             ->update([
                 'transcript_name' => $this->transcript_name,
-                'exam_times' => $this->exam_times,
+                'exam_type' => $this->exam_type,
                 'division_id' => $this->division_id,
             ]);
     }
@@ -80,20 +80,20 @@ class Transcript extends Model
         return $this->belongsTo(Division::class);
     }
 
-    public function transcriptsByLecturer($lecturerId)
+    public function transcriptsByteacher($teacherId)
     {
 
         return $this->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->join('classes', 'divisions.class_id', '=', 'classes.id')
-            ->where('lecturers.id', $lecturerId)
+            ->where('teachers.id', $teacherId)
             ->select([
                 'transcripts.*',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.grade_name AS grade_name',
                 'classes.class_name AS class_name',
                 // Các cột khác của bảng transcripts nếu cần
             ])
@@ -112,10 +112,10 @@ class Transcript extends Model
 //        return $this->belongsTo(Classes::class, 'class_id', 'id');
 //    }
 
-    // Định nghĩa mối quan hệ với bảng Specialized (nếu có)
-//    public function specialized()
+    // Định nghĩa mối quan hệ với bảng grade (nếu có)
+//    public function grade()
 //    {
-//        return $this->belongsTo(Specialize::class, 'specialized_id', 'id');
+//        return $this->belongsTo(Grade::class, 'grade_id', 'id');
 //    }
 
     public function transcriptDetails()

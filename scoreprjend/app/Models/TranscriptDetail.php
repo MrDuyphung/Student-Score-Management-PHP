@@ -20,14 +20,14 @@ class TranscriptDetail extends Model
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id') // Corrected
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id') // Corrected
             ->select([
                 'transcript_details.*',
                 'transcripts.transcript_name AS transcript_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
                 'students.student_name AS student_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.grade_name AS grade_name',
                 'classes.class_name AS class_name',
                 'subjects.subject_name AS subject_name',
                 'school_years.sy_name AS sy_name'
@@ -81,33 +81,33 @@ class TranscriptDetail extends Model
     {
         return $this->belongsTo(Transcript::class);
     }
-    public function transcriptDetailsByTranscript($lecturerId)
+    public function transcriptDetailsByTranscript($teacherId)
     {
         return $this->join('transcripts', 'transcript_details.transcript_id', '=', 'transcripts.id')
             ->join('students', 'transcript_details.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
-            ->where('lecturers.id', $lecturerId)
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
+            ->where('teachers.id', $teacherId)
             ->select([
                 'transcript_details.*',
                 'transcripts.transcript_name AS transcript_name',
-                'transcripts.exam_times AS exam_times',
+                'transcripts.exam_type AS exam_type',
                 'students.student_name AS student_name',
                 'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.grade_name AS grade_name',
                 'school_years.sy_name AS sy_name'
                 // Các cột khác của bảng transcripts nếu cần
 
             ])
-//            ->orderBy('transcript.exam_times', 'asc')
+//            ->orderBy('transcript.exam_type', 'asc')
             ->get();
     }
 
@@ -118,25 +118,25 @@ class TranscriptDetail extends Model
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->where('students.id', $studentId)
             ->select([
                 'transcript_details.*',
                 'transcripts.transcript_name AS transcript_name',
-                'transcripts.exam_times AS exam_times',
+                'transcripts.exam_type AS exam_type',
                 'students.student_name AS student_name',
                 'classes.class_name AS class_name',
 //                'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.grade_name AS grade_name',
                 'school_years.sy_name AS sy_name'
                 // Các cột khác của bảng transcripts nếu cần
             ])
-            ->orderBy('transcripts.exam_times', 'asc')
+            ->orderBy('transcripts.exam_type', 'asc')
             ->orderBy('divisions.semester', 'asc')
             ->get();
     }
@@ -148,9 +148,9 @@ class TranscriptDetail extends Model
 //            ->join('classes', 'students.class_id', '=', 'classes.id')
 //            ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
 //            ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-//            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+//            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
 //            ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-//            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+//            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
 //            ->where('students.id', $studentId);
 //
 //        if ($subjectId) {
@@ -165,9 +165,9 @@ class TranscriptDetail extends Model
 //            'classes.class_name AS class_name',
 ////            'divisions.division_name AS division_name',
 //            'divisions.semester AS semester',
-//            'lecturers.lecturer_name AS lecturer_name',
+//            'teachers.teacher_name AS teacher_name',
 //            'subjects.subject_name AS subject_name',
-//            'specializes.specialized_name AS specialized_name',
+//            'grades.grade_name AS grade_name',
 //            'school_years.sy_name AS sy_name'
 //            // Các cột khác của bảng transcripts nếu cần
 //        ])->get();

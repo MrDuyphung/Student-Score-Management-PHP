@@ -24,8 +24,8 @@ class ReexamineController extends Controller
      */
     public function index()
     {
-        $lecturer = Auth::guard('lecturer')->user(); // Lấy thông tin của sinh viên đang đăng nhập
-        $lecturerId = $lecturer->id;
+        $teacher = Auth::guard('teacher')->user(); // Lấy thông tin của sinh viên đang đăng nhập
+        $teacherId = $teacher->id;
 
         $reexamines = DB::table('reexamines')
             ->join('reports', 'reexamines.report_id', '=', 'reports.id')
@@ -35,10 +35,10 @@ class ReexamineController extends Controller
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
-            ->where('lecturers.id', $lecturerId)
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
+            ->where('teachers.id', $teacherId)
             ->select([
                 'reexamines.*',
                 'reports.*',
@@ -49,9 +49,9 @@ class ReexamineController extends Controller
                 'classes.class_name AS class_name',
                 'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'school_years.sy_name AS sy_name'
             ])
             ->get();
@@ -66,12 +66,12 @@ class ReexamineController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {// Get the currently logged-in lecturer
-        $lecturer = Auth::guard('lecturer')->user();
-        $lecturerId = $lecturer->id;
+    {// Get the currently logged-in teacher
+        $teacher = Auth::guard('teacher')->user();
+        $teacherId = $teacher->id;
 
-// Get divisions associated with the lecturer
-        $divisions = Division::where('lecturer_id', $lecturerId)->get();
+// Get divisions associated with the teacher
+        $divisions = Division::where('teacher_id', $teacherId)->get();
 
         $transcripts = Transcript::whereIn('division_id', $divisions->pluck('id'))->get();
 
@@ -155,9 +155,9 @@ Session::flash('error', 'Minimum Score is 0.');
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->join('divisions', 'transcripts.division_id', '=', 'divisions.id')
-            ->join('lecturers', 'divisions.lecturer_id', '=', 'lecturers.id')
+            ->join('teachers', 'divisions.teacher_id', '=', 'teachers.id')
             ->join('subjects', 'divisions.subject_id', '=', 'subjects.id')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->where('students.id', $studentId)
             ->select([
                 'reexamines.*',
@@ -168,9 +168,9 @@ Session::flash('error', 'Minimum Score is 0.');
                 'classes.class_name AS class_name',
                 'divisions.division_name AS division_name',
                 'divisions.semester AS semester',
-                'lecturers.lecturer_name AS lecturer_name',
+                'teachers.teacher_name AS teacher_name',
                 'subjects.subject_name AS subject_name',
-                'specializes.specialized_name AS specialized_name',
+                'grades.graded_name AS graded_name',
                 'school_years.sy_name AS sy_name'
             ])
             ->get();
@@ -186,12 +186,12 @@ Session::flash('error', 'Minimum Score is 0.');
      */
     public function edit(Reexamine $reexamine, Request $request)
     {
-        // Get the currently logged-in lecturer
-            $lecturer = Auth::guard('lecturer')->user();
-            $lecturerId = $lecturer->id;
+        // Get the currently logged-in teacher
+            $teacher = Auth::guard('teacher')->user();
+            $teacherId = $teacher->id;
 
-// Get divisions associated with the lecturer
-            $divisions = Division::where('lecturer_id', $lecturerId)->get();
+// Get divisions associated with the teacher
+            $divisions = Division::where('teacher_id', $teacherId)->get();
 
             $transcripts = Transcript::whereIn('division_id', $divisions->pluck('id'))->get();
 

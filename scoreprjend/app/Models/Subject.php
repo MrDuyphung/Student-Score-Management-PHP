@@ -14,9 +14,9 @@ class Subject extends Model
     public function index()
     {
         $query = DB::table('subjects')
-            ->join('specializes', 'subjects.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'subjects.grade_id', '=', 'grades.id')
             ->select(['subjects.*',
-                'specializes.specialized_name AS specialized_name'
+                'grades.grade_name AS grade_name'
             ])
             ->get();
 
@@ -27,8 +27,9 @@ class Subject extends Model
         DB::table('subjects')
             ->insert([
                 'subject_name' => $this->subject_name,
-                'duration' => $this->duration,
-                'specializes_id' => $this->specializes_id
+                'semester' => $this->semester,
+                'text_book' => $this->text_book,
+                'grade_id' => $this->grade_id
             ]);
     }
 
@@ -46,8 +47,9 @@ class Subject extends Model
             ->where('id', $this->id)
             ->update([
                 'subject_name' => $this->subject_name,
-                'duration' => $this->duration,
-                'specializes_id' => $this->specializes_id
+                'semester' => $this->semester,
+                'text_book' => $this->text_book,
+                'grade_id' => $this->grade_id
             ]);
     }
 
@@ -57,17 +59,17 @@ class Subject extends Model
             ->where('id', $this->id)
             ->delete();
     }
-//    protected $fillable = ['subject_name', 'specializes_id'];
-    public function specializes(){
-        return $this->belongsTo(Specialize::class);
+//    protected $fillable = ['subject_name', 'grade_id'];
+    public function grades(){
+        return $this->belongsTo(Grade::class);
     }
 
     public function scopeSearch($query, $searchTerm)
     {
         return $query->where(function ($query) use ($searchTerm) {
             $query->where('subject_name', 'like', '%' . $searchTerm . '%')
-                ->orWhereHas('specializes', function ($query) use ($searchTerm) {
-                    $query->where('specialized_name', 'like', '%' . $searchTerm . '%');
+                ->orWhereHas('grades', function ($query) use ($searchTerm) {
+                    $query->where('grade_name', 'like', '%' . $searchTerm . '%');
                 });
         });
     }

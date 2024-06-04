@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 @section('content')
     <form method="post" action="{{ route('transdetail.store') }}">
         <div class="card">
@@ -58,13 +58,13 @@
 
 {{--                                        <label class="label">Test Times</label>--}}
                                         <td>
-                                            @if($transcript -> exam_times == 0)
+                                            @if($transcript -> exam_type == 0)
                                                 <div class="badge badge-success">1 Times</div>
-                                            @elseif($transcript -> exam_times == 1)
+                                            @elseif($transcript -> exam_type == 1)
                                                 <div class="badge badge-primary">2 Times</div>
-                                            @elseif($transcript -> exam_times == 2)
+                                            @elseif($transcript -> exam_type == 2)
                                                 <div class="badge badge-danger">Relearn</div>
-                                                {{--                                            @elseif($transcript -> exam_times == 3)--}}
+                                                {{--                                            @elseif($transcript -> exam_type == 3)--}}
                                                 {{--                                                <div class="badge badge-warning">Exam Skipped</div>--}}
                                             @endif
                                         </td>

@@ -34,7 +34,7 @@
             <th>ID Class</th>
             <th>Class Name</th>
             <th>Students</th>
-            <th>Specialized</th>
+            <th>grade</th>
             <th>School Year</th>
             <th></th>
             <th></th>
@@ -51,10 +51,10 @@
                     {{ $class->getNumberOfStudents() }}
                 </td>
                 <td>
-                    {{$class->specialized_name}}
+                    {{$class->grade_name}}
                 </td>
                 <td>
-                    {{$class->sy_number}}
+                    {{$class->sy_start}}-{{$class->sy_end}}
                 </td>
                 <td>
                     <a class="btn btn-inverse-primary" href="{{route('class.edit', $class->id)}}" class="btn btn-app">Edit</a>

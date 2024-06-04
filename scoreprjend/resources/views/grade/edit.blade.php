@@ -3,19 +3,19 @@
     <form method="post" action="">
         @method('PUT')
         @csrf
-        @foreach($specializes as $specialize)
+        @foreach($grades as $grade)
             <div class="card">
                 <div class="card-body">
 
-                    <div class=""><h2 class="text-left mb-4">Edit Specialized</h2></div>
+                    <div class=""><h2 class="text-left mb-4">Edit grade</h2></div>
                     <table class="table table-striped " >
                         <div class="row w-80">
                             <div class="col-lg-10 mx-auto">
                                 <div class="auto-form-wrapper">
                                     <div class="form-group">
-                                        <label class="label">Specialized Name</label>
+                                        <label class="label">Grade Name</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Specialized Name" value="{{ $specialize->specialized_name }}" name="sy_number">
+                                            <input type="text" class="form-control" placeholder="grade Name" value="{{ $grade->grade_name }}" name="grade_name">
                                             <div class="input-group-append">
                                             </div>
                                         </div>

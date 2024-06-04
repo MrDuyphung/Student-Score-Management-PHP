@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 
 @section('content')
     <form method="post" action="{{ route('transcript.store') }}">
@@ -57,7 +57,7 @@
                 <div class="form-group">
                     <label class="label">Test times</label>
                     <div>
-                        <select name="exam_times" class="input-group">
+                        <select name="exam_type" class="input-group">
                             <option value="0">1 time</option>
                             <option value="1">2 times</option>
                         </select>

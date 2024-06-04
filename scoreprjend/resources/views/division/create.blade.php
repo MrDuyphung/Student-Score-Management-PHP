@@ -36,35 +36,35 @@
                                         <select name="class_id" class="input-group">
                                             @foreach($classes as $class)
                                                 <option value="{{$class-> id}}">
-                                                    {{$class->class_name}}_{{$class->sy_name}}___({{$class->specialized_name}})
+                                                    {{$class->class_name}}_{{$class->sy_name}}___({{$class->grade_name}})
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="label">Lecturer</label>
+                                    <label class="label">teacher</label>
                                     <div>
-         <select name="lecturer_id" class="input-group">
-            @foreach($lecturers as $lecturer)
-                <option value="{{$lecturer-> id}}">
-                    {{$lecturer->lecturer_name}}___({{$lecturer->specialized_name}})
+         <select name="teacher_id" class="input-group">
+            @foreach($teachers as $teacher)
+                <option value="{{$teacher-> id}}">
+                    {{$teacher->teacher_name}}___({{$teacher->grade_name}})
                 </option>
             @endforeach
         </select>
                                     </div>
                                 </div>
-{{--        Specialized: <select name="specializes_id" disabled>--}}
-{{--            @foreach($specializes as $specialize)--}}
-{{--                <option value="{{$specialize-> id}}"--}}
-{{--                @foreach($lecturers as $lecturer)--}}
-{{--                @if($specialize->id == $lecturer->specializes_id)--}}
+{{--        grade: <select name="grade_id" disabled>--}}
+{{--            @foreach($grades as $grade)--}}
+{{--                <option value="{{$grade-> id}}"--}}
+{{--                @foreach($teachers as $teacher)--}}
+{{--                @if($grade->id == $teacher->grade_id)--}}
 {{--                    {{'selected'}}--}}
 {{--                    @endif--}}
 
 
 {{--                >--}}
-{{--                    {{$specialize->specialized_name}}--}}
+{{--                    {{$grade->grade_name}}--}}
 
 {{--                </option>--}}
 {{--            @endforeach--}}
@@ -76,7 +76,7 @@
         <select name="subject_id" class="input-group">
             @foreach($subjects as $subject)
                 <option value="{{$subject-> id }}">
-                    {{$subject->subject_name}}___({{$subject->specialized_name}})
+                    {{$subject->subject_name}}___({{$subject->grade_name}})
                 </option>
             @endforeach
         </select>

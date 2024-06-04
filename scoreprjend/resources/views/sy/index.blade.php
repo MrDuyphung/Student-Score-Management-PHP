@@ -37,7 +37,7 @@
                     {{$school_year->sy_name}}
                 </td>
                 <td class="text-danger">
-                    {{$school_year->sy_number}}
+                    {{$school_year->sy_start}}-{{$school_year->sy_end}}
                 </td>
 
                 <td>

@@ -12,6 +12,7 @@
   <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}">
 
   <!-- plugin css -->
+
   <link rel="stylesheet" href="{{asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css')}}">
   <link rel="stylesheet" href="{{asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css')}}">
   <!-- end plugin css -->
@@ -42,6 +43,112 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="setTimeModal" tabindex="-1" role="dialog" aria-labelledby="setTimeModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="setTimeModalLabel">Set Time</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <!-- Trường nhập liệu cho ngày, tháng, năm, giờ, phút, giây -->
+                  <div class="form-group">
+                      <label for="inputDate">Date:</label>
+                      <input type="date" class="form-control" id="inputDate">
+                  </div>
+                  <div class="form-group">
+                      <label for="inputTime">Time:</label>
+                      <input type="time" class="form-control" id="inputTime">
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <!-- Nút lưu thay đổi và đóng modal -->
+                  <button type="button" class="btn btn-primary" onclick="setVirtualTime()">Set Virtual Time</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      // Hàm để kiểm tra xem có thời gian ảo đã được lưu trong sessionStorage chưa
+      function checkStoredVirtualTime() {
+          const storedVirtualTime = sessionStorage.getItem('virtualTime');
+          const storedUseVirtualTime = sessionStorage.getItem('useVirtualTime');
+
+          if (storedVirtualTime && storedUseVirtualTime) {
+              virtualTime = new Date(storedVirtualTime);
+              useVirtualTime = JSON.parse(storedUseVirtualTime);
+          } else {
+              useVirtualTime = false; // Nếu không có dữ liệu, set về thời gian thật
+          }
+      }
+
+      let virtualTime = null;
+      let useVirtualTime = false;
+
+      // Khởi tạo đồng hồ từ sessionStorage khi trang được tải
+      checkStoredVirtualTime();
+      updateClock();
+
+      function updateClock() {
+          const now = useVirtualTime ? virtualTime : new Date();
+          const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const dayOfWeek = daysOfWeek[now.getDay()];
+          const day = now.getDate().toString().padStart(2, '0');
+          const month = (now.getMonth() + 1).toString().padStart(2, '0');
+          const year = now.getFullYear();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const seconds = now.getSeconds().toString().padStart(2, '0');
+          const dateString = `${dayOfWeek}, ${day}/${month}/${year}`;
+          const timeString = `${hours}:${minutes}:${seconds}`;
+
+          document.getElementById('date').textContent = dateString;
+          document.getElementById('time').textContent = timeString;
+      }
+
+      function setVirtualTime() {
+          const inputDate = document.getElementById('inputDate').value;
+          const inputTime = document.getElementById('inputTime').value;
+
+          if (inputDate && inputTime) {
+              virtualTime = new Date(`${inputDate}T${inputTime}`);
+              useVirtualTime = true;
+              updateClock();
+              saveVirtualTimeToSessionStorage();
+              $('#setTimeModal').modal('hide');
+          } else {
+              alert('Please enter both date and time.');
+          }
+      }
+
+      function resetToRealTime() {
+          useVirtualTime = false;
+          virtualTime = new Date(); // Set về thời gian thật
+          updateClock();
+          saveVirtualTimeToSessionStorage();
+      }
+
+      function saveVirtualTimeToSessionStorage() {
+          sessionStorage.setItem('virtualTime', useVirtualTime ? virtualTime.toISOString() : '');
+          sessionStorage.setItem('useVirtualTime', JSON.stringify(useVirtualTime));
+      }
+
+      // Liên tục cập nhật đồng hồ mỗi giây
+      setInterval(() => {
+          updateClock();
+          // Nếu sử dụng thời gian ảo, thì cập nhật thời gian ảo và lưu vào sessionStorage
+          if (useVirtualTime) {
+              virtualTime.setSeconds(virtualTime.getSeconds() + 1);
+              saveVirtualTimeToSessionStorage();
+          }
+      }, 1000);
+  </script>
+
 
   <!-- base js -->
   <script src="{{asset('assets/js/app.js')}}" ></script>

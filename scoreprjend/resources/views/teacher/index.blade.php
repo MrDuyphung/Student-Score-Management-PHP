@@ -18,10 +18,10 @@
             <div class="card-body">
 
                 <div class="mb-3">
-                    <h1 class="card-title">Lecturer</h1>
+                    <h1 class="card-title">teacher</h1>
     <div class="card-body">
         <div class="mb-3">
-            <form method="GET" action="{{ route('lecturer.index') }}">
+            <form method="GET" action="{{ route('teacher.index') }}">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search by name, email, class ..." name="search">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -43,46 +43,46 @@
 
             <!-- Hiển thị nút phân trang -->
             <div class="d-flex justify-content-lg-end">
-                {{ $lecturers->links() }}
+                {{ $teachers->links() }}
             </div>
         </table>
-    <a class="btn btn-success btn-fw; menu-icon mdi mdi-creation" href="{{ route('lecturer.create') }}" >Add a lecturer</a>
+    <a class="btn btn-success btn-fw; menu-icon mdi mdi-creation" href="{{ route('teacher.create') }}" >Add a teacher</a>
         <table class="table table-striped">
         <tr>
-            <th>ID Lecturer</th>
-            <th>Lecturer Name</th>
+            <th>ID teacher</th>
+            <th>teacher Name</th>
             <th>Email</th>
             <th>Phone</th>
 {{--            <th>Password</th>--}}
-            <th>Specialized</th>
+            <th>grade</th>
             <th>Configure</th>
             <th>Destroy</th>
         </tr>
-        @foreach($lecturers as $lecturer)
+        @foreach($teachers as $teacher)
             <tr>
                 <td>
-                    {{$lecturer->id}}
+                    {{$teacher->id}}
                 </td>
                 <td>
-                    {{$lecturer->lecturer_name}}
+                    {{$teacher->teacher_name}}
                 </td>
                 <td>
-                    {{$lecturer->email}}
+                    {{$teacher->email}}
                 </td>
                 <td>
-                    {{$lecturer->phone}}
+                    {{$teacher->phone}}
                 </td>
 {{--                <td>--}}
-{{--                    {{$lecturer->password}}--}}
+{{--                    {{$teacher->password}}--}}
 {{--                </td>--}}
                 <td>
-                    {{$lecturer->specialized_name}}
+                    {{$teacher->grade_name}}
                 </td>
                 <td>
-                    <a href="{{route('lecturer.edit', $lecturer -> id )}}" class="btn btn-primary btn-fw">Edit</a>
+                    <a href="{{route('teacher.edit', $teacher -> id )}}" class="btn btn-primary btn-fw">Edit</a>
                 </td>
                 <td>
-                    <form method="post" action="{{route('lecturer.destroy', $lecturer -> id )}}">
+                    <form method="post" action="{{route('teacher.destroy', $teacher -> id )}}">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger btn-fw"  type="submit" onclick="return confirmDelete();">Delete</button>

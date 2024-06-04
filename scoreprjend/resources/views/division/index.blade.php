@@ -29,7 +29,8 @@
                     <option value="Not Working" {{ session('status') == 'Not Working' ? 'selected' : '' }}>Not Working</option>
                     <option value="Job Done" {{ session('status') == 'Job Done' ? 'selected' : '' }}>Job Done</option>
                 </select>
-                <button type="submit" class="btn btn-primary">Search&Filter</button>
+                <button type="submit" class="btn btn-primary">
+                    Filter</button>
             </div>
         </form>
     </div>
@@ -42,13 +43,13 @@
 {{--            <th>Division Name</th>--}}
             <th>Semester</th>
             <th>Class</th>
-            <th>Lecturer</th>
-            <th>Specialized</th>
+            <th>teacher</th>
+            <th>grade</th>
             <th>Subject</th>
-            <th>Admin</th>
+            <th>Admin Assigned</th>
             <th>Status</th>
             <th>Config</th>
-            <th>Destroy</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -77,8 +78,8 @@
 {{--                </td>--}}
                 <td>{{ $division->class->class_name }}_{{ $division->class->school_year->sy_name }}</td>
 
-                <td>{{ $division->lecturer_name }}</td>
-                <td>{{ $division->specialized_name }}</td>
+                <td>{{ $division->teacher_name }}</td>
+                <td>{{ $division->grade_name }}</td>
                 <td>{{ $division->subject_name }}</td>
                 <td>{{ $division->username }}</td>
                 <td>
@@ -92,8 +93,6 @@
                 </td>
                 <td>
                     <a href="{{ route('division.edit', $division->id) }}" class="mdi mdi-account-edit badge badge-primary">Edit</a>
-                </td>
-                <td>
                     <form method="post" action="{{ route('division.destroy', $division->id) }}">
                         @csrf
                         @method('DELETE')
@@ -106,9 +105,34 @@
                         }
                     </script>
                 </td>
+                <td>
+                    @if($division->getStatus() == 'Job Done')
+                        <a href="{{ route('division.checkTranscript', $division->id) }}" class="mdi-account">Check</a>
+                    @else
+                        <div class="badge badge-dark blinking">Unavailable</div>
+                    @endif
+                </td>
+
             </tr>
             @endif
         @endforeach
         </tbody>
     </table>
 @endsection
+<style>
+    .blinking {
+        animation: blinkingText 1.2s infinite;
+    }
+
+    @keyframes blinkingText {
+        0% { color: red; }
+        50% { color: transparent; }
+        100% { color: red; }
+    }
+</style>
+
+<script>
+    function confirmDelete() {
+        return confirm('Do you want to delete?');
+    }
+</script>

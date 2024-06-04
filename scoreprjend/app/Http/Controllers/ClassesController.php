@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClassesRequest;
 use App\Models\Classes;
 use App\Models\SchoolYear;
-use App\Models\Specialize;
+use App\Models\grade;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -20,12 +20,13 @@ class ClassesController extends Controller
     public function index(Request $request)
     {
         $query = Classes::query()
-            ->join('specializes', 'classes.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'classes.grade_id', '=', 'grade.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->select([
                 'classes.*',
-                'specializes.specialized_name AS specialized_name',
-                'school_years.sy_number AS sy_number',
+                'grades.grade_name AS grade_name',
+                'school_years.sy_start AS sy_start',
+                'school_years.sy_end AS sy_end',
                 'school_years.sy_name AS sy_name'
             ]);
 
@@ -48,12 +49,12 @@ class ClassesController extends Controller
      */
     public function create()
     {
-        $objSpecialize = new Specialize();
-        $specialize = $objSpecialize->index();
+        $objgrade = new grade();
+        $grade = $objgrade->index();
         $objSchoolYear = new SchoolYear();
         $schoolYear = $objSchoolYear->index();
         return view('class.create', [
-            'specializes' => $specialize,
+            'grades' => $grade,
             'school_years' => $schoolYear
         ]);
     }
@@ -64,12 +65,12 @@ class ClassesController extends Controller
     public function store(StoreClassesRequest $request)
     {
         $existingClasses = Classes::where('class_name', $request->class_name)
-            ->where('specializes_id', $request->specializes_id)
+            ->where('grade_id', $request->grade_id)
             ->where('school_year_id', $request->school_year_id)
             ->exists();
 
         if ($existingClasses) {
-            // Nếu specialized_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
+            // Nếu graded_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
             // Ví dụ:
             Session::flash('error', 'Record already exists.');
             return Redirect::route('class.index');
@@ -77,7 +78,7 @@ class ClassesController extends Controller
         }
         $obj = new Classes();
         $obj->class_name = $request->class_name;
-        $obj->specializes_id = $request->specializes_id;
+        $obj->grade_id = $request->grade_id;
         $obj->school_year_id = $request->school_year_id;
         $obj->store();
         Session::flash('success', 'Added New Record');
@@ -98,15 +99,15 @@ class ClassesController extends Controller
      */
     public function edit(Classes $classes, Request $request)
     {
-        $objSpecialize = new Specialize();
-        $specializes = $objSpecialize->index();
+        $objgrade = new grade();
+        $grades = $objgrade->index();
         $objSy = new SchoolYear();
         $school_years = $objSy->index();
         $objClass = new Classes();
         $objClass->id = $request->id;
         $classes = $objClass->edit();
         return view('class.edit', [
-            'specializes' => $specializes,
+            'grades' => $grades,
             'school_years' => $school_years,
             'classes' => $classes,
             'id' => $objClass->id
@@ -119,12 +120,12 @@ class ClassesController extends Controller
     public function update(UpdateStudentRequest $request, Classes $classes)
     {
         $existingClasses = Classes::where('class_name', $request->class_name)
-            ->where('specializes_id', $request->specializes_id)
+            ->where('grade_id', $request->grade_id)
             ->where('school_year_id', $request->school_year_id)
             ->exists();
 
         if ($existingClasses) {
-            // Nếu specialized_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
+            // Nếu graded_name đã tồn tại, bạn có thể trả về một thông báo lỗi hoặc chuyển hướng người dùng về trang tương ứng.
             // Ví dụ:
             Session::flash('error', 'Record already exists.');
             return Redirect::route('class.index');
@@ -132,7 +133,7 @@ class ClassesController extends Controller
         $obj = new Classes();
         $obj->id = $request->id;
         $obj->class_name = $request->class_name;
-        $obj->specializes_id = $request->specializes_id;
+        $obj->grade_id = $request->grade_id;
         $obj->school_year_id = $request->school_year_id;
         $obj->updateClass();
             Session::flash('success', 'Added New Record');

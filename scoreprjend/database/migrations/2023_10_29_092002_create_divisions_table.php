@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('divisions', function (Blueprint $table) {
             $table->id();
-            $table->string('division_name');
-            $table->tinyInteger('semester');
-            $table->foreignId('lecturer_id')->constrained('lecturers');
+            $table->foreignId('teacher_id')->constrained('teachers');
             $table->foreignId('class_id')->constrained('classes');
             $table->foreignId('subject_id')->constrained('subjects');
             $table->foreignId('admin_id')->constrained('admins');

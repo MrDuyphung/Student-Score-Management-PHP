@@ -31,7 +31,7 @@
                     <tr>
 {{--                        <th>Student_Name</th>--}}
 {{--                        <th>Class</th>--}}
-{{--                        <th>Specialized</th>--}}
+{{--                        <th>grade</th>--}}
                         <th>Subject</th>
 {{--                        <th>Test time</th>--}}
                         <th>Semester</th>
@@ -49,20 +49,20 @@
 {{--                            </td>--}}
 {{--                            </td>--}}
 {{--                            <td>--}}
-{{--                                {{$report->specialized_name}}--}}
+{{--                                {{$report->grade_name}}--}}
 {{--                            </td>--}}
 
                             <td>
                                 {{$report->subject_name}}
                             </td>
 {{--                            <td>--}}
-{{--                                @if($report -> exam_times == 0)--}}
+{{--                                @if($report -> exam_type == 0)--}}
 {{--                                    <div class="badge badge-success">1 times</div>--}}
-{{--                                @elseif($report -> exam_times == 1)--}}
+{{--                                @elseif($report -> exam_type == 1)--}}
 {{--                                    <div class="badge badge-primary">2 times</div>--}}
-{{--                                @elseif($report -> exam_times == 2)--}}
+{{--                                @elseif($report -> exam_type == 2)--}}
 {{--                                    <div class="badge badge-danger">Banned</div>--}}
-{{--                                @elseif($report -> exam_times == 3)--}}
+{{--                                @elseif($report -> exam_type == 3)--}}
 {{--                                    <div class="badge badge-warning">Exam Skipped</div>--}}
 {{--                                @endif--}}
 {{--                            </td>--}}
@@ -79,7 +79,7 @@
                                 @if($report->status == 0)
                                     <div class="badge badge-warning">Pending</div>
                                 @elseif($report->status == 1)
-                                    <div class="badge badge-info">Accepted Wait For Lecturer Action</div>
+                                    <div class="badge badge-info">Accepted Wait For teacher Action</div>
                                 @elseif($report->status == 2)
                                     <div class="badge badge-danger">Rejected</div>
                                 @elseif($report->status == 3)

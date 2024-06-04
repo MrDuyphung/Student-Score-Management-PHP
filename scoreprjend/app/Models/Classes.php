@@ -9,13 +9,13 @@
 ////{
 ////    use HasFactory;
 ////    public $timestamps = false;
-////    protected $fillable = ['class_name', 'specializes_id', 'school_year_id'];
+////    protected $fillable = ['class_name', 'grade_id', 'school_year_id'];
 //    public function student(){
 //       return $this -> hasMany(Student::class);
 //    }
 //
-//    public function specializes(){
-//        return $this -> belongsTo(Specialize::class);
+//    public function grades(){
+//        return $this -> belongsTo(Grade::class);
 //    }
 //    public function school_year(){
 //        return $this -> belongsTo(SchoolYear::class);
@@ -38,11 +38,12 @@ class Classes extends Model
     public function index()
     {
         $classes = DB::table('classes')
-            ->join('specializes', 'classes.specializes_id', '=', 'specializes.id')
+            ->join('grades', 'classes.grade_id', '=', 'grades.id')
             ->join('school_years', 'classes.school_year_id', '=', 'school_years.id')
             ->select(['classes.*',
-                'specializes.specialized_name AS specialized_name',
-                'school_years.sy_number AS sy_number',
+                'grades.grade_name AS grade_name',
+                'school_years.sy_start AS sy_start',
+                'school_years.sy_end AS sy_end',
                 'school_years.sy_name AS sy_name'
             ])
 
@@ -57,7 +58,7 @@ class Classes extends Model
         DB::table('classes')
             ->insert([
                 'class_name' => $this->class_name,
-                'specializes_id' => $this->specializes_id,
+                'grade_id' => $this->grade_id,
                 'school_year_id' => $this->school_year_id
             ]);
     }
@@ -76,7 +77,7 @@ class Classes extends Model
             ->where('id', $this->id)
             ->update([
                 'class_name' => $this->class_name,
-                'specializes_id' => $this->specializes_id,
+                'grade_id' => $this->grade_id,
                 'school_year_id' => $this->school_year_id
             ]);
     }

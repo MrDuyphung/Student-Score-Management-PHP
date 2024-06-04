@@ -26,7 +26,12 @@
 {{--      </div>--}}
 {{--    </div>--}}
 {{--  </div>--}}
-  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
+
+
+
+
+
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
     <div class="card card-statistics">
       <div class="card-body">
         <div class="d-flex flex-md-column flex-xl-row flex-wrap justify-content-between align-items-md-center justify-content-xl-between">
@@ -53,9 +58,9 @@
             <i class="mdi mdi-account text-success icon-lg"></i>
           </div>
           <div class="float-right">
-            <p class="mb-0 text-right">Total Lecturers</p>
+            <p class="mb-0 text-right">Total teachers</p>
             <div class="fluid-container">
-              <h3 class="font-weight-medium text-right mb-0">{{ $lecturerCount }}</h3>
+              <h3 class="font-weight-medium text-right mb-0">{{ $teacherCount }}</h3>
             </div>
           </div>
         </div>
@@ -111,66 +116,43 @@
     }
 @endphp
 
-
-{{--<div class="row">--}}
-{{--    <div class="col-md-6">--}}
-{{--        <div class="card">--}}
-{{--            <div class="card-body">--}}
-{{--                <h4 class="card-title">Class with Student</h4>--}}
-{{--                <div class="wrapper mt-4">--}}
-{{--                    <div class="d-flex justify-content-between mb-2">--}}
-{{--                        <div class="d-flex align-items-center">--}}
-{{--                            <p class="mb-0 font-weight-medium">{{ $classWithStudentsCount }}</p>--}}
-{{--                        </div>--}}
-{{--                        <p class="mb-0 font-weight-medium">{{ round(($classWithStudentsCount / ($classWithStudentsCount + $classWithoutStudentsCount)) * 100) }}%</p>--}}
-{{--                    </div>--}}
-{{--                    <div class="progress">--}}
-{{--                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ round(($classWithStudentsCount / ($classWithStudentsCount + $classWithoutStudentsCount)) * 100) }}%" aria-valuenow="{{ $classWithStudentsCount }}" aria-valuemin="0" aria-valuemax="{{ $classWithStudentsCount + $classWithoutStudentsCount }}"></div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-
-{{--    <div class="col-md-6">--}}
-{{--        <div class="card">--}}
-{{--            <div class="card-body">--}}
-{{--                <h4 class="card-title">Class with no Student</h4>--}}
-{{--                <div class="wrapper mt-4">--}}
-{{--                    <div class="d-flex justify-content-between mb-2">--}}
-{{--                        <div class="d-flex align-items-center">--}}
-{{--                            <p class="mb-0 font-weight-medium">{{ $classWithoutStudentsCount }}</p>--}}
-{{--                        </div>--}}
-{{--                        <p class="mb-0 font-weight-medium">{{ round(($classWithoutStudentsCount / ($classWithStudentsCount + $classWithoutStudentsCount)) * 100) }}%</p>--}}
-{{--                    </div>--}}
-{{--                    <div class="progress">--}}
-{{--                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ round(($classWithoutStudentsCount / ($classWithStudentsCount + $classWithoutStudentsCount)) * 100) }}%" aria-valuenow="{{ $classWithoutStudentsCount }}" aria-valuemin="0" aria-valuemax="{{ $classWithStudentsCount + $classWithoutStudentsCount }}"></div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+{{--<div class="form-group">--}}
+{{--    <label for="schoolyearSelect">School Year Checker:</label>--}}
+{{--    <select class="input-group" id="schoolyearSelect">--}}
+{{--        <option value="">Check School Year</option>--}}
+{{--        @foreach(\App\Models\SchoolYear::all() as $school_year)--}}
+{{--            <option value="{{ $school_year->id }}" @if( $school_year->id) selected @endif>{{ $school_year->sy_start }}_{{ $school_year->sy_end }}</option>--}}
+{{--        @endforeach--}}
+{{--    </select>--}}
 {{--</div>--}}
-
+{{--<div class="form-group">--}}
+{{--    <label for="gradeSelect">grade Checker:</label>--}}
+{{--    <select class="input-group" id="gradeSelect">--}}
+{{--        <option value="">Check grade</option>--}}
+{{--        @foreach(\App\Models\Grade::all() as $grade)--}}
+{{--            <option value="{{ $grade->id }}" @if( $grade->id) selected @endif>{{ $grade->grade_name }}</option>--}}
+{{--        @endforeach--}}
+{{--    </select>--}}
+{{--</div>--}}
 <div class="form-group">
-    <label for="classSelect">Class Checker:</label>
-    <select class="input-group" id="classSelect">
-        <option value="">Check Class</option>
-        @foreach(\App\Models\Classes::all() as $class)
-            <option value="{{ $class->id }}" @if($abd == $class->id) selected @endif>{{ $class->class_name }}_{{ $class->school_year->sy_name }}</option>
-        @endforeach
-    </select>
-</div>
-<div class="form-group">
-    <label for="subjectSelect">Subject Checker:</label>
-    <select class="input-group" id="transcriptSelect">
-        <option value="">Check Subject</option>
-        @foreach(\App\Models\Subject::all() as $subject)
-            <option value="{{ $subject->id }}" @if($abc == $subject->id) selected @endif>{{ $subject->subject_name }}</option>
-        @endforeach
-    </select>
-</div>
-{{--@dump($result)--}}
+        <label for="classSelect">Class Checker:</label>
+        <select class="input-group" id="classSelect">
+            <option value="">Check Class</option>
+            @foreach(\App\Models\Classes::all() as $class)
+                <option value="{{ $class->id }}" @if($abd == $class->id) selected @endif>{{ $class->class_name }}_{{ $class->school_year->sy_name }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="subjectSelect">Subject Checker:</label>
+        <select class="input-group" id="transcriptSelect">
+            <option value="">Check Subject</option>
+            @foreach(\App\Models\Subject::all() as $subject)
+                <option value="{{ $subject->id }}" @if($abc == $subject->id) selected @endif>{{ $subject->subject_name }}</option>
+            @endforeach
+        </select>
+    </div>
+    {{--@dump($result)--}}
 @if($result == null)
     <div class="row mt-3" >
     <div class="col-md-6">
@@ -269,7 +251,7 @@
     $score5down = 0;
     $scoreban = 0;
     $scoreskip = 0;
-        $hasSecondTest = false; // Thêm biến này để kiểm tra xem có bản ghi transcript nào có exam_times bằng 1 không
+        $hasSecondTest = false; // Thêm biến này để kiểm tra xem có bản ghi transcript nào có exam_type bằng 1 không
 
  @endphp
     @foreach($result as $re)
@@ -287,7 +269,7 @@
                $scoreskip ++;
             }
 
-             if ($re->exam_times == 1) {
+             if ($re->exam_type == 1) {
                 $hasSecondTest = true;
             }
  @endphp
@@ -415,15 +397,21 @@
     @method('PUT')
     <input type="hidden" id="classId" name="class_id" value="">
     <input type="hidden" id="subjectId" name="subject_id" value="">
+{{--    <input type="hidden" id="schoolyearId" name="school_year_id" value="">--}}
+{{--    <input type="hidden" id="gradeId" name="grade_id" value="">--}}
 </form>
 
 <script>
     // Sử dụng JavaScript để theo dõi sự kiện change của các trường select
+    // document.getElementById('schoolyearSelect').addEventListener('change', updateHiddenForm);
+    // document.getElementById('gradeSelect').addEventListener('change', updateHiddenForm);
     document.getElementById('classSelect').addEventListener('change', updateHiddenForm);
     document.getElementById('transcriptSelect').addEventListener('change', updateHiddenForm);
 
     function updateHiddenForm() {
         // Cập nhật giá trị của form ẩn khi các trường select thay đổi
+        // document.getElementById('schoolyearId').value = document.getElementById('schoolyearSelect').value;
+        // document.getElementById('gradeId').value = document.getElementById('gradeSelect').value;
         document.getElementById('classId').value = document.getElementById('classSelect').value;
         document.getElementById('subjectId').value = document.getElementById('transcriptSelect').value;
 

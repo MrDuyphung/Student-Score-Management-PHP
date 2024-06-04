@@ -1,6 +1,6 @@
 <script src="jquery.min.js"></script>
 <script src="bootstrap.min.js"></script>
-{{--@if(session('lecturer'))--}}
+{{--@if(session('teacher'))--}}
 
 {{--@endif--}}
 <nav class="sidebar sidebar-offcanvas dynamic-active-class-disabled" id="sidebar">
@@ -51,6 +51,12 @@
                   <span id="time"></span>
               </center>
           </div>
+{{--          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#setTimeModal">--}}
+{{--              Set Time--}}
+{{--          </button>--}}
+
+{{--          <button type="button" class="btn btn-warning" onclick="resetToRealTime()">Reset to Real Time</button>--}}
+
 
 
 
@@ -71,15 +77,15 @@
           </a>
       </li>
       <li class="nav-item ">
-          <a class="nav-link" href="{{route('specialized.index')}}">
+          <a class="nav-link" href="{{route('grade.index')}}">
               <i class="menu-icon mdi mdi-chart-line"></i>
-              <span class="menu-title">Specialized Management</span>
+              <span class="menu-title">grade Management</span>
           </a>
       </li>
       <li class="nav-item ">
-          <a class="nav-link" href="{{route('lecturer.index')}}">
+          <a class="nav-link" href="{{route('teacher.index')}}">
               <i class="menu-icon mdi mdi-emoticon"></i>
-              <span class="menu-title">Lecturer List</span>
+              <span class="menu-title">teacher List</span>
           </a>
       </li>
       <li class="nav-item ">
@@ -112,6 +118,24 @@
               <span class="menu-title">Division</span>
           </a>
       </li>
+      <li class="nav-item ">
+          <a class="nav-link" href="{{route('division.index')}}">
+              <i class="menu-icon mdi mdi-monitor-speaker"></i>
+              <span class="menu-title">Notification Event</span>
+          </a>
+      </li>
+      <li class="nav-item ">
+          <a class="nav-link" href="{{route('division.index')}}">
+              <i class="menu-icon mdi mdi-cash"></i>
+              <span class="menu-title">Fee Collection</span>
+          </a>
+      </li>
+      <li class="nav-item ">
+          <a class="nav-link" href="{{route('division.index')}}">
+              <i class="menu-icon mdi mdi-spellcheck"></i>
+              <span class="menu-title">grade Transfer</span>
+          </a>
+      </li>
 {{--      <li class="nav-item ">--}}
 {{--          <a class="nav-link" href="{{route('transdetail.index')}}">--}}
 {{--              <i class="menu-icon mdi mdi-account-alert"></i>--}}
@@ -131,10 +155,10 @@
 {{--            <a class="nav-link" href="{{route('sy.index')}}">School Year Management</a>--}}
 {{--          </li>--}}
 {{--          <li class="nav-item }">--}}
-{{--            <a class="nav-link" href="{{route('specialized.index')}}">Specialized Management</a>--}}
+{{--            <a class="nav-link" href="{{route('grade.index')}}">grade Management</a>--}}
 {{--          </li>--}}
 {{--          <li class="nav-item ">--}}
-{{--            <a class="nav-link" href="{{route('lecturer.index')}}">Lecturer List</a>--}}
+{{--            <a class="nav-link" href="{{route('teacher.index')}}">Teacher List</a>--}}
 {{--          </li>--}}
 {{--        </ul>--}}
 {{--      </div>--}}

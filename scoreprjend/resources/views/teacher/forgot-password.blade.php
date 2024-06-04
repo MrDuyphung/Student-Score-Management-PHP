@@ -4,7 +4,7 @@
         <div class="row w-100">
             <div class="col-lg-4 mx-auto">
                 <div class="auto-form-wrapper">
-                    <form action="{{ route('lecturer.sendResetLinkEmails') }}" method="post">
+                    <form action="{{ route('teacher.sendResetLinkEmails') }}" method="post">
                         @csrf
                         <div class="form-group">
                             <label class="label">Email</label>
@@ -33,7 +33,7 @@
                             <button class="btn btn-outline-danger submit-btn btn-block">Reset Password</button>
                         </div>
                         <div class="form-group text-center">
-                            <a href="{{ route('lecturer.login') }}" class="text-small text-black">Back to Login</a>
+                            <a href="{{ route('teacher.login') }}" class="text-small text-black">Back to Login</a>
                         </div>
                         @if(session('success'))
                             <div class="alert alert-success">

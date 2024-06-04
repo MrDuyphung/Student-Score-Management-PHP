@@ -1,23 +1,23 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 @section('content')
-    <h1>Lecturer Profile</h1>
-    <p>Name: {{ $lecturer->lecturer_name }}</p>
-    <p>Email: {{ $lecturer->email }}</p>
-    <p>Phone: {{ $lecturer->phone }}</p>
-{{--    <form method="POST" action="{{ route('lecturer.profile.update') }}">--}}
+    <h1>teacher Profile</h1>
+    <p>Name: {{ $teacher->teacher_name }}</p>
+    <p>Email: {{ $teacher->email }}</p>
+    <p>Phone: {{ $teacher->phone }}</p>
+{{--    <form method="POST" action="{{ route('teacher.profile.update') }}">--}}
 {{--        @csrf--}}
 {{--        @method('PUT')--}}
 {{--        <div class="form-group">--}}
-{{--            <label for="lecturer_name">Full Name</label>--}}
-{{--            <input type="text" name="lecturer_name" id="lecturer_name" value="{{ old('lecturer_name', $lecturer->lecturer_name) }}" class="form-control" required>--}}
+{{--            <label for="teacher_name">Full Name</label>--}}
+{{--            <input type="text" name="teacher_name" id="teacher_name" value="{{ old('teacher_name', $teacher->teacher_name) }}" class="form-control" required>--}}
 {{--        </div>--}}
 {{--        <div class="form-group">--}}
 {{--            <label for="email">Email</label>--}}
-{{--            <input type="email" name="email" id="email" value="{{ old('email', $lecturer->email) }}" class="form-control" required>--}}
+{{--            <input type="email" name="email" id="email" value="{{ old('email', $teacher->email) }}" class="form-control" required>--}}
 {{--        </div>--}}
 {{--        <div class="form-group">--}}
 {{--            <label for="phone">Phone</label>--}}
-{{--            <input type="text" name="phone" id="phone" value="{{ old('phone', $lecturer->phone) }}" class="form-control" required>--}}
+{{--            <input type="text" name="phone" id="phone" value="{{ old('phone', $teacher->phone) }}" class="form-control" required>--}}
 {{--        </div>--}}
 {{--        <div class="form-group">--}}
 {{--            <label for="password">Password (Leave empty to keep the same)</label>--}}

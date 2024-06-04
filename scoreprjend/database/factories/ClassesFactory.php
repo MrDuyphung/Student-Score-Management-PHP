@@ -19,7 +19,7 @@ class ClassesFactory extends Factory
     {
         return [
             'class_name' => $this->faker->colorName,
-            'specializes_id' => $this->faker->randomElement(DB::table('specializes')->pluck('id')),
+            'grade_id' => $this->faker->randomElement(DB::table('grades')->pluck('id')),
             'school_year_id' => $this->faker->randomElement(DB::table('school_years')->pluck('id'))
 
         ];

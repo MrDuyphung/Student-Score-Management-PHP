@@ -1,6 +1,6 @@
 <script src="jquery.min.js"></script>
 <script src="bootstrap.min.js"></script>
-@if(session('lecturer'))
+@if(session('teacher'))
 
 @endif
 <nav class="sidebar sidebar-offcanvas dynamic-active-class-disabled" id="sidebar">
@@ -12,12 +12,12 @@
                         <img src="{{ url('assets/images/faces/avt.jpg') }}" alt="profile image">
                     </div>
                     <div class="text-wrapper">
-                        @if(Auth::guard('lecturer')->check())
-                            <p class="lecturer_name">{{ Auth::guard('lecturer')->user()->lecturer_name }}</p>
+                        @if(Auth::guard('teacher')->check())
+                            <p class="teacher_name">{{ Auth::guard('teacher')->user()->teacher_name }}</p>
                         @endif
                         <div class="dropdown" data-display="static">
                             <a href="#" class="nav-link d-flex user-switch-dropdown-toggler" id="" href="#" data-toggle="dropdown" aria-expanded="">
-                                <small class="designation text-muted">Lecturer</small>
+                                <small class="designation text-muted">teacher</small>
                                 <span class="status-indicator online"></span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="UsersettingsDropdown">
@@ -59,15 +59,15 @@
 {{--            </a>--}}
 {{--        </li>--}}
 {{--        <li class="nav-item ">--}}
-{{--            <a class="nav-link" href="{{route('specialized.index')}}">--}}
+{{--            <a class="nav-link" href="{{route('grade.index')}}">--}}
 {{--                <i class="menu-icon mdi mdi-chart-line"></i>--}}
-{{--                <span class="menu-title">Specialized Management</span>--}}
+{{--                <span class="menu-title">grade Management</span>--}}
 {{--            </a>--}}
 {{--        </li>--}}
 {{--        <li class="nav-item ">--}}
-{{--            <a class="nav-link" href="{{route('lecturer.index')}}">--}}
+{{--            <a class="nav-link" href="{{route('teacher.index')}}">--}}
 {{--                <i class="menu-icon mdi mdi-emoticon"></i>--}}
-{{--                <span class="menu-title">Lecturer List</span>--}}
+{{--                <span class="menu-title">Teacher List</span>--}}
 {{--            </a>--}}
 {{--        </li>--}}
 {{--        <li class="nav-item ">--}}
@@ -95,7 +95,7 @@
 {{--            </a>--}}
 {{--        </li>--}}
 {{--        <li class="nav-item ">--}}
-{{--            <a class="nav-link" href="{{route('lecturer.profile')}}">--}}
+{{--            <a class="nav-link" href="{{route('teacher.profile')}}">--}}
 {{--                <i class="menu-icon mdi mdi-account"></i>--}}
 {{--                <span class="menu-title">My Profile</span>--}}
 {{--            </a>--}}
@@ -131,10 +131,10 @@
         {{--            <a class="nav-link" href="{{route('sy.index')}}">School Year Management</a>--}}
         {{--          </li>--}}
         {{--          <li class="nav-item }">--}}
-        {{--            <a class="nav-link" href="{{route('specialized.index')}}">Specialized Management</a>--}}
+        {{--            <a class="nav-link" href="{{route('grade.index')}}">grade Management</a>--}}
         {{--          </li>--}}
         {{--          <li class="nav-item ">--}}
-        {{--            <a class="nav-link" href="{{route('lecturer.index')}}">Lecturer List</a>--}}
+        {{--            <a class="nav-link" href="{{route('teacher.index')}}">Teacher List</a>--}}
         {{--          </li>--}}
         {{--        </ul>--}}
         {{--      </div>--}}

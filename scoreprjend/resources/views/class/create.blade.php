@@ -21,10 +21,10 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    Specialized<br> <select name="specializes_id"  class="input-group" >
-                                        @foreach($specializes as $specialize)
-                                            <option value="{{$specialize-> id}}">
-                                                {{$specialize->specialized_name}}
+                                    grade<br> <select name="grade_id"  class="input-group" >
+                                        @foreach($grades as $grade)
+                                            <option value="{{$grade-> id}}">
+                                                {{$grade->grade_name}}
                                             </option>
                                         @endforeach
                                     </select>
@@ -33,7 +33,7 @@
                                     School Year<br> <select name="school_year_id" class="input-group">
                                         @foreach($school_years as $school_year)
                                             <option value="{{$school_year-> id}}">
-                                                {{$school_year->sy_number}}_{{$school_year->sy_name}}
+                                                ({{$school_year->sy_start}}-{{$school_year->sy_end}})_{{$school_year->sy_name}}
                                             </option>
                                         @endforeach
                                     </select>

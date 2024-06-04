@@ -21,14 +21,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-            Specialized<br> <select name="specializes_id" class="input-group">
-                @foreach($specializes as $specialize)
-                    <option value="{{$specialize-> id}}"
-                    @if($specialize->id == $class->specializes_id)
+            grade<br> <select name="grade_id" class="input-group">
+                @foreach($grades as $grade)
+                    <option value="{{$grade-> id}}"
+                    @if($grade->id == $class->grade_id)
                         {{'selected'}}
                         @endif
                     >
-                        {{$specialize->specialized_name}}
+                        {{$grade->grade_name}}
                     </option>
                 @endforeach
             </select><br>
@@ -41,7 +41,7 @@
                         {{'selected'}}
                         @endif
                     >
-                        {{$school_year->sy_number}}
+                        {{$school_year->sy_start}}-{{$school_year->sy_end}}
                     </option>
                 @endforeach
             </select><br>

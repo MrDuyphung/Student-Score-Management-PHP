@@ -1,4 +1,4 @@
-@extends('layout.masterLecturer')
+@extends('layout.masterteacher')
 
 @section('content')
     @if (session('error'))
@@ -18,7 +18,6 @@
     <div class="mb-3">
         <form method="GET" action="{{ route('division.show') }}">
             <div class="input-group">
-
                 <select name="status" class="input-group">
                     <option value="">Check Status</option>
                     <option value="Working" {{ session('status') == 'Working' ? 'selected' : '' }}>Working</option>
@@ -29,87 +28,111 @@
             </div>
         </form>
     </div>
+
     <table class="table table-striped">
         <thead>
         <tr>
-{{--            <th>Division Name</th>--}}
             <th>Semester</th>
             <th>Class</th>
-            <th>Lecturer</th>
-            <th>Specialized</th>
+            <th>teacher</th>
+            <th>grade</th>
             <th>Subject</th>
-            <th>Admin</th>
+            <th>Admin Assigned</th>
             <th>Status</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
+        @php $count = 0 @endphp
         @foreach($divisions as $division)
             @if($division->getStatus() == $selectedStatus)
-            <tr>
-{{--                <td>--}}
-{{--                    {{ $division->division_name }}--}}
-{{--                </td>--}}
-                <td>
-                    @if($division->semester == 0)
-                        <div class="badge badge-primary">Semester 1</div>
-                    @elseif($division->semester == 1)
-                        <div class="badge badge-info">Semester 2</div>
-                    @elseif($division->semester == 2)
-                        <div class="badge badge-warning">Extra Semester</div>
-                    @endif
-                </td>
-                <td>{{ $division->class->class_name }}_{{ $division->class->school_year->sy_name }}</td>
-{{--                <td>--}}
-{{--                    @if($division->class_count == 1)--}}
-{{--                        <div class="badge badge-primary">1 Class</div>--}}
-{{--                    @elseif($division->class_count == 2)--}}
-{{--                        <div class="badge badge-warning">2 Class</div>--}}
-{{--                    @elseif($division->class_count == 3)--}}
-{{--                        <div class="badge badge-danger">3 Class</div>--}}
-{{--                    @endif--}}
-{{--                </td>--}}
-                <td>
-                    {{ $division->lecturer_name }}
-                </td>
-                <td>
-                    {{ $division->specialized_name }}
-                </td>
-                <td>
-                    {{ $division->subject_name }}
-                </td>
-                <td>
-                    {{ $division->username }}
-                </td>
-                <td>
-                    @if($division->getStatus() == 'Job Done')
-                        <div class="badge badge-success">{{ $division->getStatus() }}</div>
-                    @elseif($division->getStatus() == 'Working')
-                        <div class="badge badge-warning">{{ $division->getStatus() }}</div>
-                    @else
-                        <div class="badge badge-danger">{{ $division->getStatus() }}</div>
-                    @endif
-                </td>
-                <td>
-                    @if($division->getStatus() == 'Job Done')
-{{--                        <div class="badge badge-success">Finished</div>--}}
-{{--                        --}}{{--                                    <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
-                    @elseif($division->getStatus() == 'Working')
-{{--                        @if($transcript->exam_times == 0)--}}
+                @php $count++ @endphp
+                <tr>
+                    <td>
+                        @if($division->semester == 0)
+                            <div class="badge badge-primary">Semester 1</div>
+                        @elseif($division->semester == 1)
+                            <div class="badge badge-info">Semester 2</div>
+                        @elseif($division->semester == 2)
+                            <div class="badge badge-warning">Extra Semester</div>
+                        @endif
+                    </td>
+                    <td>{{ $division->class->class_name }}_{{ $division->class->school_year->sy_name }}</td>
+                    {{--                <td>--}}
+                    {{--                    @if($division->class_count == 1)--}}
+                    {{--                        <div class="badge badge-primary">1 Class</div>--}}
+                    {{--                    @elseif($division->class_count == 2)--}}
+                    {{--                        <div class="badge badge-warning">2 Class</div>--}}
+                    {{--                    @elseif($division->class_count == 3)--}}
+                    {{--                        <div class="badge badge-danger">3 Class</div>--}}
+                    {{--                    @endif--}}
+                    {{--                </td>--}}
+                    <td>
+                        {{ $division->teacher_name }}
+                    </td>
+                    <td>
+                        {{ $division->grade_name }}
+                    </td>
+                    <td>
+                        {{ $division->subject_name }}
+                    </td>
+                    <td>
+                        {{ $division->username }}
+                    </td>
+                    <td>
+                        @if($division->getStatus() == 'Job Done')
+                            <div class="badge badge-success">{{ $division->getStatus() }}</div>
+                        @elseif($division->getStatus() == 'Working')
+                            <div class="badge badge-warning">{{ $division->getStatus() }}</div>
+                        @else
+                            <div class="badge badge-danger">{{ $division->getStatus() }}</div>
+                        @endif
+                    </td>
+                    <td>
+                        @if($division->getStatus() == 'Job Done')
+                            {{--                        <div class="badge badge-success">Finished</div>--}}
+                            {{--                        --}}{{--                                    <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
+                        @elseif($division->getStatus() == 'Working')
+                            {{--                        @if($transcript->exam_type == 0)--}}
                             <a class="btn btn-outline-success" href="{{route('transcript.create', ['division_id' => $division->id])}}">Make Transcript</a>
-{{--                        @elseif($transcript->exam_times == 1)--}}
-{{--                            @if($transcript->transcriptDetails->where('transcript_id', $transcript->id)->count() > 0)--}}
-{{--                                <div class="badge badge-success">Finished</div>--}}
-{{--                                --}}{{--                                            <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
+                            {{--                        @elseif($transcript->exam_type == 1)--}}
+                            {{--                            @if($transcript->transcriptDetails->where('transcript_id', $transcript->id)->count() > 0)--}}
+                            {{--                                <div class="badge badge-success">Finished</div>--}}
+                            {{--                                --}}{{--                                            <a class="btn btn-outline-success" href="{{route('transdetail.index', ['transcript_id' => $transcript->id])}}">Check</a>--}}
 
-                            @else
-                        <a class="btn btn-outline-success" href="{{route('transcript.create', ['division_id' => $division->id])}}">Make Transcript</a>
-                            @endif
+                        @else
+                            <a class="btn btn-outline-success" href="{{route('transcript.create', ['division_id' => $division->id])}}">Make Transcript</a>
+                        @endif
 
 
-                </td>
-            </tr>
-        @endif
+                    </td>
+                </tr>
+            @endif
         @endforeach
+        @if($count == 0)
+            <tr>
+                <td colspan="8" style="text-align: center" class="blink-red">Remember to check your work timeline</td>
+            </tr>
+
+
+        @endif
+        </tbody>
     </table>
 @endsection
+<style>
+    @keyframes blink {
+        0% {
+            background-color: rgba(255, 0, 0, 0.1);
+        }
+        50% {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+        100% {
+            background-color: rgba(255, 0, 0, 0.1);
+        }
+    }
+
+    .blink-red {
+        animation: blink 1.5s infinite;
+    }
+</style>
